@@ -8,7 +8,11 @@ import {
   DialogHeader,
 } from "@components/ui/dialog";
 
+
 const QrScannerComponent = () => {
+
+
+  
   const [scannedData, setScannedData] = useState(null);
   const [devices, setDevices] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState("");
@@ -28,21 +32,6 @@ const QrScannerComponent = () => {
   const handleScan = (result) => {
     if (result) {
       setScannedData(result[0].rawValue);
-      setOpen = {};
-
-      return (
-        <div>
-          <Dialog>
-            <DialogContent>
-              <DialogHeader>The Results are In</DialogHeader>
-
-              <DialogDescription></DialogDescription>
-              <p> {scannedData}</p>
-              <DialogClose>close</DialogClose>
-            </DialogContent>
-          </Dialog>
-        </div>
-      );
     }
   };
 
@@ -53,7 +42,7 @@ const QrScannerComponent = () => {
   return (
     <div>
       {/* Dropdown to select camera */}
-      {/* <select
+      <select
         value={selectedDeviceId}
         onChange={(e) => setSelectedDeviceId(e.target.value)}
       >
@@ -62,7 +51,7 @@ const QrScannerComponent = () => {
             {device.label || `Camera ${device.deviceId}`}
           </option>
         ))}
-      </select> */}
+      </select>
 
       {/* <div
         className={
@@ -83,7 +72,6 @@ const QrScannerComponent = () => {
 
        <div className="flex items-center justify-center h-screen ml-4">
             <div className="w-72 h-screen" >
-              {" "}
               {/* Adjust the width and height as needed */}
               <Scanner
                 onScan={handleScan}
@@ -102,4 +90,4 @@ const QrScannerComponent = () => {
   );
 };
 
-export default QrScannerComponent;
+

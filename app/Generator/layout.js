@@ -1,7 +1,7 @@
 
 
 import Header from "@components/header/header";
-// import Nav from "@components/nav/nav";
+import Nav from "@components/nav/nav";
 import "../globals.css";
 
 
@@ -21,9 +21,9 @@ export default function RootLayout({ children }) {
             <Header />
           </div>
 
-          {/* <div>
+          <div>
             <Nav  />
-          </div> */}
+          </div>
 
           {children}
 
