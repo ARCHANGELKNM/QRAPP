@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { QrReader } from "react-qr-reader";
 
-const Test = (props) => {
+export default function Test  (props)  {
   const [data, setData] = useState("No result");
 
   return (
