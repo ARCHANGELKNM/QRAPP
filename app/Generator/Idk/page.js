@@ -1,24 +1,31 @@
 "use client";
 
-import QrScanner from 'qr-scanner';
-import { useEffect } from 'react';
+import QrScanner from "qr-scanner";
+import { useEffect } from "react";
 
+// library used nimiq/qr-scanner
 
-export default function  Scanner () {
-   const handleScan = async (data) => {
-    console.log('Scanned data:', data);
-  };
-   
-   useEffect(() => {
-    const scanner = new QrScanner('qr-scanner', handleScan);
-    scanner.start();
+export default function Scanner() {
+  useEffect(() => {
+    const video = document.getElementById("qr-video");
+    const scanner = new QrScanner(
+      video,
+      (result) => {
+        console.log(result.data);
+      },
+      {
+        onDecodeError: (error) => {
+          console.error(error);
+        },
+        highlightScanRegion: true,
+        highlightCodeOutline: true,
+      }
+    );
+
+    return () => {
+      scanner.stop();
+    };
   }, []);
 
-  return (
-    <div>
-      <h1>QR Code Scanner</h1>
-      <div id="qr-scanner"></div>
-    </div>
-  );
-  
+  return <video id="qr-video" />;
 }

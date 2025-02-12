@@ -54,7 +54,7 @@ export default function Nav() {
       {menuItem.map((menu, index) => (
         <Link href={menu.path} key={menu.id}>
           <div
-            className={` flex gap-3 mb-8 h-7 w-7  justify-center place-content-center  mr-1  hover:bg-blue-500 hover:text-white hover:rounded-sm   ${
+            className={` flex gap-3 mb-8 h-7 w-7  justify-center place-content-center  mr-1  hover:bg-black hover:text-white hover:rounded-sm   ${
               path == menu.path && "bg-blue-500 text-white rounded-sm"
             }`}
           >
