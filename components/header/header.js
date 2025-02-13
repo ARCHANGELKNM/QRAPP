@@ -14,7 +14,7 @@ const Header = () => {
        AOS.init({});
      }, []);
   return (
-    <div className={"   w-screen h-10   border  "}>
+    <div className={"   w-screen h-10   border  mb-5"}>
       <h3 className={" font-bold "}>QrApp</h3>
 
     </div>

@@ -7,8 +7,8 @@ import {Card, CardContent, CardHeader, CardTitle} from "@components/ui/card";
 import GeneratorButton from "@components/Generate Button/GeneratorButton";
 import AOS from 'aos';
 import "aos/dist/aos.css";
-import ECards from "@components/homepageCom/explaintory cards";
-import HTU from "@components/homepageCom/HTU";
+import ECards from "@components/HomepageComponents/explaintory cards";
+import HTU from "@components/HomepageComponents/How to Use";
 
 
 

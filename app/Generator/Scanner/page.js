@@ -1,10 +1,9 @@
-import Scanner from "../Idk/page";
+import Scanner from "./Components/ScannerComponent";
 
-
-export default function Scanner2   () {
-  return(
-    <div>
-      <Scanner/>
-     </div> 
-  )
+export default function ScannerPage () {
+    return (
+      <div>
+        <Scanner/>
+      </div>
+    );
 }
