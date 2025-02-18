@@ -47,7 +47,7 @@ export default function Scanner() {
   }, []);
 
   return (
-    <div className={"flex justify-center"}>
+    <div className={"flex justify-center h-screen"}>
       <video
         id="qr-video"
         style={{ width: "70%" }}
