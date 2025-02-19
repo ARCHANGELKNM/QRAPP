@@ -5,18 +5,15 @@ import { LucideEarthLock } from "lucide-react";
 
 export default function ECards() {
   return (
-    <div
-      className={
-        " flex flex-col  justify-center space-y-52 "
-      }
-    >
+    <div className={" flex flex-col  justify-center space-y-52 "}>
       <Card
         className={
-          " absolute h-48 w-48 sm:h-44 sm:w-44 sm:right-2 sm:top-0 sm:mt-2 xl:h-48 xl:w-48 xl:mb-10 2xl:mb-10 lg:mb-10"
+          " absolute h-48 w-48  mb-10 sm:h-44 sm:w-44 sm:right-2 sm:top-0 sm:mt-1 xl:h-48 xl:w-48 xl:mb-10 2xl:mb-10 lg:mb-10"
         }
       >
+        <p className={"text-lg font-bold flex justify-center"}>Error Free</p>
         <div className={"flex justify-center h-48 w-48 place-content-center"}>
-          <CircleX className={"h-40 w-40"} />
+          <CircleX className={"h-36 w-40"} />
         </div>
       </Card>
 
@@ -25,18 +22,21 @@ export default function ECards() {
           "absolute h-32 w-48 sm:h-44 sm:w-44 sm:right-52 sm:bottom-10 xl:h-48 xl:w-48 xl:mb-7"
         }
       >
+        <p className={"text-lg font-bold flex justify-center"}>Effient </p>
         <div className={"flex justify-center h-48 w-48 place-content-center"}>
-          <ClockArrowDownIcon className={"h-40 w-40"} />
+          <ClockArrowDownIcon className={"h-36 w-40"} />
         </div>
       </Card>
 
       <Card
         className={
-          "absolute h-32 w-48  sm:h-44 sm:w-44  sm:right-2 sm:bottom-0 sm:mb-1 xl:h-48 xl:w-48 xl:mb-2 xl:mt-10  "
+          "absolute h-32 w-48  sm:h-44 sm:w-44  sm:right-2 sm:bottom-0 sm:mb-1 xl:w-48 xl:mt-10 "
         }
       >
+        <p className={"text-lg font-bold flex justify-center"}>Secure</p>
+
         <div className={"flex justify-center h-48 w-48 place-content-center"}>
-          <LucideEarthLock className={"h-40 w-40"} />
+          <LucideEarthLock className={"h-36 w-40"} />
         </div>
       </Card>
     </div>

@@ -47,12 +47,10 @@ export default function Scanner() {
   }, []);
 
   return (
-    <div className={"flex justify-center h-screen"}>
-      <video
-        id="qr-video"
-        style={{ width: "70%" }}
-        className={"flex justify-center h-screen"}
-      />
-    </div>
+    <video
+      id="qr-video"
+      style={{ width: "100%" }}
+      className={"absolute ml-10 flex justify-center h-full "}
+    />
   );
 }
