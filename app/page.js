@@ -8,7 +8,7 @@ import GeneratorButton from "@components/Generate Button/GeneratorButton";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import ECards from "@components/HomepageComponents/explaintory cards";
-import HTU from "@components/HomepageComponents/How to Use";
+import HTU from "@components/HomepageComponents/How To Use/How to Use";
 
 export default function Home() {
   const route = useRouter();
@@ -58,7 +58,7 @@ export default function Home() {
                  </h3>
                  */}
 
-              <div>
+              <div className={"w-44"}>
                 <p className={"mb-5"}>
                   QR codes or Quick Response code is a form of .......
                 </p>
