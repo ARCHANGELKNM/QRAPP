@@ -5,9 +5,10 @@ import { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Image from "next/image";
+import HTU from ".//Public/HTU.png";
 
 
-export default function HTU() {
+export default function HowToUse() {
   useEffect(() => {
     AOS.init({});
   }, []);
@@ -33,11 +34,10 @@ export default function HTU() {
         </div> */}
 
         <Image
-          src={"/HTU.png"}
+          src={HTU}
           alt={''}
-          height={42}
-          width={42}
           className={"mt-5"}
+          data-aos="fade-up"
          
         />
       </div>

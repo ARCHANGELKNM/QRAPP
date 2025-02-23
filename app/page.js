@@ -8,7 +8,7 @@ import GeneratorButton from "@components/Generate Button/GeneratorButton";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import ECards from "@components/HomepageComponents/explaintory cards";
-import HTU from "@components/HomepageComponents/How To Use/How to Use";
+import HowToUse from "@components/HomepageComponents/How To Use/How to Use";
 
 export default function Home() {
   const route = useRouter();
@@ -70,7 +70,7 @@ export default function Home() {
         </div>
 
         <div>
-          <HTU />
+          <HowToUse />
         </div>
       </div>
     </section>
