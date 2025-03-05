@@ -111,6 +111,7 @@ export default function Generator() {
                   <QRcode
                     value={combinedInputs}
                     className={"absolute  mb-5 flex justify-center  "}
+                    fgColor="#000000"
                   />
                 </div>
 

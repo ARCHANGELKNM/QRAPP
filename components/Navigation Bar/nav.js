@@ -6,11 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { Separator } from "../ui/separator";
 import AOS from "aos";
+import { useKindeBrowserClient } from "@node_modules/@kinde-oss/kinde-auth-nextjs";
 import "aos/dist/aos.css";
 
 export default function Nav() {
+  const { user } = useKindeBrowserClient();
   const path = usePathname();
 
   useEffect(() => {
@@ -50,12 +51,13 @@ export default function Nav() {
     },
   ];
   return (
-    <div className={" fixed p-1 border h-screen w-12  mr-3 "} >
+    <div className={" fixed p-1 border h-screen w-12  top-10 bg-white mr-3 "}>
       {menuItem.map((menu, index) => (
         <Link href={menu.path} key={menu.id}>
           <div
             className={` flex gap-3 mb-8 h-7 w-7  justify-center place-content-center  mr-1  hover:bg-black hover:text-white hover:rounded-sm   ${
-              path == menu.path && "bg-blue-500 text-white rounded-sm"
+              path == menu.path &&
+              " bg-blue-400 ring-cyan-900 text-white rounded-sm"
             }`}
           >
             <menu.icon
@@ -68,7 +70,7 @@ export default function Nav() {
       <Avatar className={"relative bottom-0"}>
         <AvatarImage>
           <Image
-            src={"Generator/Public/download.png"}
+            src={user?.profile}
             alt={""}
             height={42}
             width={42}
@@ -80,6 +82,3 @@ export default function Nav() {
     </div>
   );
 }
-
-
-

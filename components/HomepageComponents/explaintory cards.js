@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { CircleX } from "lucide-react";
 import { ClockArrowDownIcon } from "lucide-react";
-import { LucideEarthLock } from "lucide-react"; 
+import { LucideEarthLock } from "lucide-react";
 
 export default function ECards() {
   return (
-    <div className={" flex flex-col  justify-center space-y-52 "}>
+    <div className={" flex justify-center gap-96 "}>
       <Card
         className={
           " absolute h-48 w-48  mb-10 sm:h-44 sm:w-44 sm:right-2 sm:top-0 sm:mt-1 xl:h-48 xl:w-48 xl:mb-10 2xl:mb-10 lg:mb-10"
