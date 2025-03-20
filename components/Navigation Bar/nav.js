@@ -1,7 +1,6 @@
 "use client";
 
 import { LucideQrCode, ScanIcon, Settings, Settings2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,12 +42,12 @@ export default function Nav() {
       path: "/Generator/Settings",
     },
 
-    {
-      id: 4,
-      name: "IDK",
-      path: "/Generator/Idk",
-      icon: Settings2,
-    },
+    // {
+    //   id: 4,
+    //   name: "IDK",
+    //   path: "/Generator/Idk",
+    //   icon: Settings2,
+    // },
   ];
   return (
     <div className={" fixed p-1 border h-screen w-12  top-10 bg-white mr-3 "}>
@@ -67,18 +66,6 @@ export default function Nav() {
         </Link>
       ))}
 
-      <Avatar className={"relative bottom-0"}>
-        <AvatarImage>
-          <Image
-            src={user?.profile}
-            alt={""}
-            height={42}
-            width={42}
-          />
-        </AvatarImage>
-
-        <AvatarFallback>LO</AvatarFallback>
-      </Avatar>
     </div>
   );
 }

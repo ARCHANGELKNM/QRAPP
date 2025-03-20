@@ -8,22 +8,53 @@ import { useKindeBrowserClient } from "@node_modules/@kinde-oss/kinde-auth-nextj
 
 export default function page() {
   const { user } = useKindeBrowserClient();
+  const{isAuthenticated} = useKindeBrowserClient();
+
   return (
     <div>
-      <div className={"flex justify-center top-20"}>
-        <Avatar
-          className={" top-20 w-60 h-60 md:w-72 md:h-72 ring-2 ring-sky-900"}
-        >
-          <AvatarImage>
-            <Image src={user?.profile} alt={""} height={100} width={100} />
-          </AvatarImage>
+ 
+      {!isAuthenticated ? (
+              <div>
+                <div className="flex">
+                  {/* <LoginLink>
+                    <Button className={"  absolute right-0 top-1 h-6 ml-4"}>
+                      LogIn
+                    </Button>
+                  </LoginLink>
+      
+                  <RegisterLink>
+                    <Button className={"  absolute right-16 mr-2 top-1 h-6"}>
+                      Sign Up
+                    </Button>
+                  </RegisterLink> */}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className={"flex relative justify-center top-12 "}>
+                  <Avatar
+                    className={"relative  w-52 h-52 mb-10  "}
+                  >
+                    <AvatarImage>
+                      <Image alt={""} src={user?.profile} height={50} width={50} />
+                    </AvatarImage>
+      
+                    <AvatarFallback>hi</AvatarFallback>
+                  </Avatar>
+                </div>
+              </div>
+            )}
+    {/* <div className={" "}>
+        <div className={"flex-col "}>
+          <Card className={" absolute  h-12 w-32  bottom-0 left-1/2"}>
+            <CardContent>hello</CardContent>
+          </Card>
 
-          <AvatarFallback>LO</AvatarFallback>
-        </Avatar>
-      </div>
-      <p className={"font-bold mt-5"}>Name</p>
-
-      <p className={"font-semibold"}>Email</p>
+          <Card className={"absolute right-1/4 bottom-0 h-12 w-32 mt-10"}>
+            <CardContent>Life</CardContent>
+          </Card>
+        </div>
+      </div> */}
     </div>
   );
 }
