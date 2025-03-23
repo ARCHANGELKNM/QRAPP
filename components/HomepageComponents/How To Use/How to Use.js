@@ -15,7 +15,7 @@ export default function HowToUse() {
   return (
     <div>
       <div className={"flex justify-center items-center mt-5 "}>
-        <h3 className={" absolute font-bold text-2xl mb-5"} data-aos="fade-up">
+        <h3 className={" absolute font-bold text-2xl my-5 "} data-aos="fade-up">
           How To Use
         </h3>
       </div>
@@ -36,7 +36,7 @@ export default function HowToUse() {
         <Image
           src={HTU}
           alt={''}
-          className={"mt-5"}
+          className={"mt-2"}
           data-aos="fade-up"
          
         />

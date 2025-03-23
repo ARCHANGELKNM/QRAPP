@@ -3,7 +3,7 @@ export default function Loading() {
     /* Loading Animation */
     <div
       className={
-        " flex justify-center place-content-center w-screen h-screen    "
+        " flex justify-center place-content-center w-screen h-screen bg-white    "
       }
     >
       <div className={"flex justify-center   "}>

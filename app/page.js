@@ -41,7 +41,7 @@ export default function Home() {
         <div className={"flex justify-center place-items-center "}>
           <Card
             className={
-              " relative  h-svh w-3/5   sm:w-3/4 sm:h-96 xl:h-96 xl:w-3/4  xl:mb-5 bg-transparent"
+              " relative  h-svh w-3/4   sm:w-3/4 sm:h-96 xl:h-96 xl:w-3/4  xl:mb-5 bg-transparent"
             }
             data-aos="fade-up"
           >
@@ -58,9 +58,13 @@ export default function Home() {
                  </h3>
                  */}
 
-              <div className={"w-44"}>
+              <div className={"w-60"}>
                 <p className={"mb-5"}>
-                  QR codes or Quick Response code is a form of .......
+                  A QR code, quick-response code, is a type of two-dimensional
+                  matrix barcode invented in 1994 by Masahiro Hara of Japanese
+                  company Denso Wave for labelling automobile parts. It features
+                  black squares on a white background with fiducial markers,
+                  readable by imaging devices like cameras.
                 </p>
               </div>
 

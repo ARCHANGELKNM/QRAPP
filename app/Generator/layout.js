@@ -1,9 +1,6 @@
 
-
-import Header from "@components/Header/header";
 import Nav from "@components/Navigation Bar/nav";
 import "../globals.css";
-
 
 export const metadata = {
   title: "QRAPP",
@@ -11,18 +8,12 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-
-    
   return (
     <html lang="en">
       <body>
         <div>
           <div>
-            <Header />
-          </div>
-
-          <div>
-            <Nav  />
+            <Nav />
           </div>
 
           {children}

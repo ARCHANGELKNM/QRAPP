@@ -10,56 +10,47 @@ module.exports = {
   ],
   theme: {
   	extend: {
-		animation: {
-			blob: "blob 7s infinite",
-			sqaure: "sqaure 7s infinite",
-		  },
-
-		  transitionDelay:{
-			'2000':"2000ms"
-		  },
-       keyframes:{
-  
-		 sqaure:{
-			"0%":{
-                transform: " scale(1)"
-			},
-
-			"33%":{
-               transform: "scale(1.1)"
-			},
-           "66%":{
-               transform: "scale(0.9)"
-		   },
-
-		   "100%":{
-                transform: "scale(1)"
-		   }
-			
-		 },
-          blob:{
-			"0%":{
-                transform: "scale(1) translate(0px, 0px)",
-			},
-
-			"33%":{
-                transform: "scale(1.1) translate(30px, -50px)",
-			},
-
-			"66%":{
-                transform: "scale(0.9) translate(-20px, 20px)",
-			},
-
-			"100%":{
-               transform: "scale(1) translate(0px, 0px)",
-			}
-		  },	 
-	   },
+  		animation: {
+  			blob: 'blob 7s infinite',
+  			sqaure: 'sqaure 7s infinite'
+  		},
+  		transitionDelay: {
+  			'2000': '2000ms'
+  		},
+  		keyframes: {
+  			sqaure: {
+  				'0%': {
+  					transform: ' scale(1)'
+  				},
+  				'33%': {
+  					transform: 'scale(1.1)'
+  				},
+  				'66%': {
+  					transform: 'scale(0.9)'
+  				},
+  				'100%': {
+  					transform: 'scale(1)'
+  				}
+  			},
+  			blob: {
+  				'0%': {
+  					transform: 'scale(1) translate(0px, 0px)'
+  				},
+  				'33%': {
+  					transform: 'scale(1.1) translate(30px, -50px)'
+  				},
+  				'66%': {
+  					transform: 'scale(0.9) translate(-20px, 20px)'
+  				},
+  				'100%': {
+  					transform: 'scale(1) translate(0px, 0px)'
+  				}
+  			}
+  		},
   		backgroundImage: {
   			'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
   			'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
   		},
-  		
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
@@ -105,6 +96,16 @@ module.exports = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
+  			},
+  			sidebar: {
+  				DEFAULT: 'hsl(var(--sidebar-background))',
+  				foreground: 'hsl(var(--sidebar-foreground))',
+  				primary: 'hsl(var(--sidebar-primary))',
+  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+  				accent: 'hsl(var(--sidebar-accent))',
+  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+  				border: 'hsl(var(--sidebar-border))',
+  				ring: 'hsl(var(--sidebar-ring))'
   			}
   		}
   	}
