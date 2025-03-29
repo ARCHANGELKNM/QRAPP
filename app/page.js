@@ -38,10 +38,10 @@ export default function Home() {
 
         <GeneratorButton />
 
-        <div className={"flex justify-center place-items-center "}>
+        <div className={"flex justify-center place-items-center mb-4"}>
           <Card
             className={
-              " relative  h-svh w-3/4   sm:w-3/4 sm:h-96 xl:h-96 xl:w-3/4  xl:mb-5 bg-transparent"
+              " relative  h-4/5 w-3/4   sm:w-3/4 sm:h-96 xl:h-96 xl:w-3/4  xl:mb-5 bg-transparent"
             }
             data-aos="fade-up"
           >
@@ -59,7 +59,7 @@ export default function Home() {
                  */}
 
               <div className={"w-60"}>
-                <p className={"mb-5"}>
+                <p className={"mb-5 font-semibold"}>
                   A QR code, quick-response code, is a type of two-dimensional
                   matrix barcode invented in 1994 by Masahiro Hara of Japanese
                   company Denso Wave for labelling automobile parts. It features

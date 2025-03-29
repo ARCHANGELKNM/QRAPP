@@ -11,9 +11,11 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import {
   LoginLink,
   RegisterLink, 
-} from "@kinde-oss/kinde-auth-nextjs/components";import AOS from "aos";
+} from "@kinde-oss/kinde-auth-nextjs/components";
+import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 
 export default function Nav() {
 
@@ -26,7 +28,7 @@ export default function Nav() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className={"m-0"}>
         <header className=" sticky top-0 flex h-10 shrink-0 items-center gap-2 border-b m-0 ">
           <SidebarTrigger className="-ml-1" />
           {!isAuthenticated ? (

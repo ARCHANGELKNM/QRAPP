@@ -14,13 +14,13 @@ export default function HowToUse() {
   }, []);
   return (
     <div>
-      <div className={"flex justify-center items-center mt-5 "}>
-        <h3 className={" absolute font-bold text-2xl my-5 "} data-aos="fade-up">
+      <div className={"flex justify-center items-center mb-10 "}>
+        <h3 className={" absolute font-bold text-2xl  "} data-aos="fade-up">
           How To Use
         </h3>
       </div>
 
-      <div className={"flex justify-center"}>
+      <div className={"flex justify-center  "}>
         {/* <div
           className={
             " flex justify-center items-center bg-blue-600 w-1/4 mt-5 "
@@ -36,7 +36,7 @@ export default function HowToUse() {
         <Image
           src={HTU}
           alt={''}
-          className={"mt-2"}
+          className={""}
           data-aos="fade-up"
          
         />
