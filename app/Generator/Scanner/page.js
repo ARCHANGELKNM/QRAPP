@@ -1,69 +1,131 @@
 "use client";
+import React, { useState, useEffect, useRef } from "react";
+import { BrowserMultiFormatReader } from "@zxing/browser";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { QrScanner } from "react-qrcode-scanner";
-import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-} from "@components/ui/dialog";
-import { Button } from "@components/ui/button";
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from "@components/ui/card";
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center h-screen bg-black">
+    <div className="w-16 h-16 border-4 border-white border-t-transparent border-b-transparent rounded-full animate-spin"></div>
+  </div>
+);
 
-export default function QRCodeScanner() {
-  const [qrcodeResults, setQrcodeResults] = useState(null);
-  const handleScan = (value) => {
-    setQrcodeResults(value);
-    console.log({ value });
+const QrScanner = () => {
+  const [qrResult, setQrResult] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const videoRef = useRef(null);
+  const codeReader = useRef(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      codeReader.current = new BrowserMultiFormatReader();
+      codeReader.current.decodeFromVideoDevice(
+        null,
+        videoRef.current,
+        (result, err) => {
+          if (result) {
+            setQrResult(result.getText());
+          }
+        }
+      );
+    }
+    return () => {
+      if (codeReader.current) {
+        codeReader.current.reset();
+      }
+    };
+  }, [loading]);
+
+  useEffect(() => {
+    if (qrResult) {
+      const resetTimer = setTimeout(() => {
+        setQrResult(null);
+      }, 60000);
+      return () => clearTimeout(resetTimer);
+    }
+  }, [qrResult]);
+
+  const handleReset = () => {
+    setQrResult(null);
   };
 
-  const handleError = (error) => {
-    console.log({ error });
-  };
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
-    <div>
-      <div className="  w-screen h-screen">
-        <QrScanner
-          vedioStyle={{ className: "w-full h-screen" }}
-          onScan={handleScan}
-          onError={handleError}
-          className={"h-3/4 w-screen "}
+    <div className="relative w-full min-h-screen bg-black flex items-center justify-center overflow-hidden">
+      {/* Scanner Box Container */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="relative flex items-center justify-center w-11/12 sm:w-4/5 md:w-2/3 lg:w-1/2 aspect-square rounded-2xl overflow-hidden border-4 border-white shadow-2xl"
+      >
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-cover"
         />
-      </div>
-      <Dialog className={" flex justify-center"} open={!!qrcodeResults}>
-        <DialogTitle>
-           <p></p>
-        </DialogTitle>
-        <DialogContent>
-          <Card>
-            <CardContent>
-              <CardHeader>
-                <DialogHeader>
-                  <p className={"font-bold text-lg flex justify-center"}>
-                    The Results Are In
-                  </p>
-                </DialogHeader>
-              </CardHeader>
-              <div className={"flex justify-center"}>{qrcodeResults}</div>
-              <DialogFooter>
-                <DialogClose>
-                  <Button asChild>Close</Button>
-                </DialogClose>
-              </DialogFooter>
-            </CardContent>
-          </Card>
-        </DialogContent>
-      </Dialog>
+
+        {/* Animated Scan Line */}
+        <motion.div
+          className="absolute left-1/2 w-3/4 h-0.5 bg-red-500 rounded-full opacity-80"
+          style={{ transform: "translateX(-50%)" }}
+          initial={{ top: "15%" }}
+          animate={{ top: "85%" }}
+          transition={{
+            duration: 2,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+        />
+      </motion.div>
+
+      {/* QR Result + Blur */}
+      <AnimatePresence>
+        {qrResult && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-md z-10"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.4 }}
+              className="absolute inset-0 z-20 flex flex-col justify-center items-center p-6"
+            >
+              <div className="bg-white/90 backdrop-blur-lg p-6 rounded-2xl shadow-2xl text-center w-full">
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  QR Result
+                </h3>
+                <p className="text-gray-700 text-sm sm:text-base break-words">
+                  {qrResult}
+                </p>
+                <button
+                  onClick={handleReset}
+                  className="mt-6 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white text-base rounded-full shadow-md"
+                >
+                  Scan Another
+                </button>
+                <p className="text-gray-500 mt-2 text-xs">(Auto-reset in 5s)</p>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
-}
+};
+
+export default QrScanner;

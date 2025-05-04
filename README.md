@@ -34,3 +34,20 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+
+## Hello There what even is this ?
+
+
+Hello , I started developing this project in the summer of 2024 , the intial project was inspired by  one of my python projects , where I used python to develope a qrcode generator. This project is quite similar to that one but rather than using python I used Javascript to make it ,it also has a qrcode scanner now so yeah [09-04-25]
+
+
+## what you need
+
+To  be able to modify this project install the following libraries:
+
+-> next js
+-> kinde
+-> react-qr-code
+->

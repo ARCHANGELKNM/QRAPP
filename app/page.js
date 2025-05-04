@@ -9,6 +9,9 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import ECards from "@components/HomepageComponents/explaintory cards";
 import HowToUse from "@components/HomepageComponents/How To Use/How to Use";
+import Features from "@components/HomepageComponents/Feature List/Feature List";
+import CTA from "@components/HomepageComponents/Call To Action/CTA";
+import WQR from "@components/HomepageComponents/Why Qrcodes/WQR";
 
 export default function Home() {
   const route = useRouter();
@@ -76,6 +79,18 @@ export default function Home() {
         <div>
           <HowToUse />
         </div>
+
+        <div>
+          <Features />
+        </div>
+        
+        <div>
+          <WQR/>
+        </div>
+  
+       <div>
+          <CTA/>
+       </div> 
       </div>
     </section>
   );

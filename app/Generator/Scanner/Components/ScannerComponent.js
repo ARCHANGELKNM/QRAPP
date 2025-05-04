@@ -1,89 +1,66 @@
-"use client";
+import { motion } from "framer-motion";
 
-import { QrScanner } from "react-qrcode-scanner";
-import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-  DialogHeader,
-  DialogFooter,
-} from "@components/ui/dialog";
-import { Button } from "@components/ui/button";
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from "@components/ui/card";
-import { useState, useRef, useEffect } from "react";
+export function AnimatedCorners() {
+  const cornerSize = 30;
 
-
-export default function QRCodeScanner(value) {
-  const [qrcodeResults, setQrcodeResults] = useState(null);
-    const scannerRef = useRef(null);
-  const handleScan = (value) => {
-    setQrcodeResults(value);
-    console.log({ value });
+  const transition = {
+    duration: 1.2,
+    ease: "easeInOut",
+    repeat: Infinity,
+    repeatType: "reverse",
   };
-
-  const handleError = (error) => {
-    console.log({ error });
-  };
-
-
-    useEffect(() => {
-      if (scannerRef.current) {
-        const height = window.innerHeight * 0.9; // 90% of screen height
-        scannerRef.current.style.height = `${height}px`; // Apply height
-      }
-    }, []); 
 
   return (
-    <div>
-      {/* The Scanner Component */}
+    <>
+      {/* Top-Left */}
+      <motion.div
+        className="absolute border-t-4 border-l-4 border-white shadow-white shadow-md"
+        style={{ width: cornerSize, height: cornerSize }}
+        initial={{ top: "5%", left: "5%" }}
+        animate={{ top: "45%", left: "45%" }}
+        transition={transition}
+      ></motion.div>
 
-      <div className="w-full h-screen bg-black flex justify-center items-center">
-        <div className="relative w-full h-[90vh] max-w-[100%]">
-          <QrScanner
-            style={{ width: "90vw", height: "90vh" }}
-            delay={300}
-            onScan={handleScan}
-            onError={handleError}
-            className="qr-screen"
-            ref={scannerRef}
-          />
-        </div>
-      </div>
+      {/* Top-Right */}
+      <motion.div
+        className="absolute border-t-4 border-r-4 border-white shadow-white shadow-md"
+        style={{ width: cornerSize, height: cornerSize }}
+        initial={{ top: "5%", right: "5%" }}
+        animate={{ top: "45%", right: "45%" }}
+        transition={transition}
+      ></motion.div>
 
-      {/* This component displays the scanner's results */}
-      <div>
-        <Dialog className={" flex justify-center"} open={!!qrcodeResults}>
-          <DialogContent>
-            <Card>
-              <CardContent>
-                <CardHeader>
-                  <DialogHeader>
-                    <p className={"font-bold text-lg flex justify-center"}>
-                      The Results Are In
-                    </p>
-                  </DialogHeader>
-                </CardHeader>
-                <p className={"flex justify-center"}>{value}</p>
-                <DialogFooter></DialogFooter>
-              </CardContent>
-            </Card>
+      {/* Bottom-Left */}
+      <motion.div
+        className="absolute border-b-4 border-l-4 border-white shadow-white shadow-md"
+        style={{ width: cornerSize, height: cornerSize }}
+        initial={{ bottom: "5%", left: "5%" }}
+        animate={{ bottom: "45%", left: "45%" }}
+        transition={transition}
+      ></motion.div>
 
-            <DialogClose>
-              <Button asChild className={"absolute bottom-0"}>
-            
-                Close
-              </Button>
-            </DialogClose>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </div>
+      {/* Bottom-Right */}
+      <motion.div
+        className="absolute border-b-4 border-r-4 border-white shadow-white shadow-md"
+        style={{ width: cornerSize, height: cornerSize }}
+        initial={{ bottom: "5%", right: "5%" }}
+        animate={{ bottom: "45%", right: "45%" }}
+        transition={transition}
+      ></motion.div>
+
+      {/* Scanning Laser */}
+      <motion.div
+        className="absolute left-1/2 w-3/4 h-0.5 bg-red-500 rounded-full opacity-80"
+        style={{ transform: "translateX(-50%)" }}
+        initial={{ top: "20%" }}
+        animate={{ top: "80%" }}
+        transition={{
+          duration: 1.5,
+          ease: "easeInOut",
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+      ></motion.div>
+    </>
   );
 }
