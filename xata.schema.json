@@ -1,0 +1,12 @@
+{
+  "tables": [
+    {
+      "name": "qrcode_info",
+      "columns": [
+        { "name": "user_id", "type": "string" },
+        { "name": "qrContent", "type": "text" },
+        { "name": "createdAt", "type": "datetime", "defaultValue": "now()" }
+      ]
+    }
+  ]
+}

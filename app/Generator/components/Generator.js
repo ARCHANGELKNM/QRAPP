@@ -1,4 +1,6 @@
 "use client";
+
+import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import { useState } from "react";
 import {
   Card,
@@ -19,6 +21,7 @@ import {
 } from "@/components/ui/drawer";
 import QRcode from "react-qr-code";
 import { Button } from "@components/ui/button";
+import { getXataClient } from "@/lib/xata";
 
 export default function Generator() {
   const [grade, setGrade] = useState("");
@@ -26,6 +29,32 @@ export default function Generator() {
   const [surname, setSurname] = useState("");
   const [category, setCategory] = useState("");
   const combinedInputs = name + " " + surname + " " + category + " " + grade;
+
+  const handleQrGenerated = async (formValues) => {
+    const { productName, price, location } = formValues;
+
+    // Combine into QR content (e.g., as JSON or delimited string)
+    const qrContent = JSON.stringify({ name });
+
+
+    setQrValue(qrContent);
+
+   
+    try {
+      const { user } = useKindeAuth(); 
+
+      await xata.db.user_qrcodes.create({
+        name: user?.given_name,
+        userId: user?.id,
+        createdAt: new Date().toISOString(),
+        qrContent,
+      });
+      console.log("Saved to Xata!");
+    } catch (err) {
+      console.error("Failed to save QR data to Xata:", err);
+    }
+  };
+
   return (
     <div>
       <div className={"flex justify-center items-center ml-5"}>
@@ -127,4 +156,17 @@ export default function Generator() {
       </div>
     </div>
   );
+}
+
+
+
+{
+  /*
+  
+
+
+
+  
+  
+  */
 }

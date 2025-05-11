@@ -1,0 +1,7 @@
+{
+  "databaseURL": "https://ARCHANGELKNM-s-workspace-i1rj0r.us-east-1.xata.sh/db/my-qrapp-data-base",
+  "codegen": {
+    "output": "src/xata.js",
+    "moduleType": "esm"
+  }
+}
