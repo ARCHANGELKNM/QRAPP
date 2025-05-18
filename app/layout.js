@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
           <div>
            {children}
 
-            <div className="relative w-16 h-16 bg-green-300 top-0 sm:bg-violet-900 md:bg-blue-500  lg:bg-teal-700 xl:bg-yellow-600 2xl:bg-orange-300"></div>
+           
           </div>
         </body>
       </html>

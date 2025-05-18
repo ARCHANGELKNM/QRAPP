@@ -62,7 +62,7 @@ export function AppSidebar(index) {
           <SidebarMenu>
             <SidebarMenuItem key={item.id}>
               <SidebarMenuButton className={"flex"}>
-                <Link href={item.path}>{item.name}</Link>
+                <Link href={item.path}> {item.name}</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -71,7 +71,7 @@ export function AppSidebar(index) {
         <SidebarFooter>
           {!isAuthenticated ? (
             <div>
-              <div className="flex ">
+              <div className="flex justify-center">
                 <LoginLink>
                   <Button className={"  absolute right-0 bottom-0 h-6 ml-4"}>
                     LogIn

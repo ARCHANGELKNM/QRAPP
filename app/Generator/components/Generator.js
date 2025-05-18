@@ -1,6 +1,6 @@
 "use client";
 
-import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useState } from "react";
 import {
   Card,
@@ -21,40 +21,38 @@ import {
 } from "@/components/ui/drawer";
 import QRcode from "react-qr-code";
 import { Button } from "@components/ui/button";
-import { getXataClient } from "@/lib/xata";
+
 
 export default function Generator() {
   const [grade, setGrade] = useState("");
   const [name, setName] = useState("");
+  const [qrContent, setQrContent] = useState("");
+  const { user } = useKindeBrowserClient();
   const [surname, setSurname] = useState("");
-  const [category, setCategory] = useState("");
-  const combinedInputs = name + " " + surname + " " + category + " " + grade;
+  const combinedInputs = name + " " + surname + " " + grade;
 
-  const handleQrGenerated = async (formValues) => {
-    const { productName, price, location } = formValues;
+  const handleGenerate = async () => {
+    const qrData = {name };
+    const qrString = JSON.stringify(qrData);
+    setQrContent(qrString); // This would be used to render the QR co de
 
-    // Combine into QR content (e.g., as JSON or delimited string)
-    const qrContent = JSON.stringify({ name });
-
-
-    setQrValue(qrContent);
-
-   
+    // Send data to API route
     try {
-      const { user } = useKindeAuth(); 
-
-      await xata.db.user_qrcodes.create({
-        name: user?.given_name,
-        userId: user?.id,
-        createdAt: new Date().toISOString(),
-        qrContent,
+      const response = await fetch("/api/save-qr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+             user_id: user.name, //assuming Kinde gives you this
+          ...qrData,
+        }),
       });
-      console.log("Saved to Xata!");
-    } catch (err) {
-      console.error("Failed to save QR data to Xata:", err);
+
+      const result = await response.json();
+      console.log("Saved to DB:", result);
+    } catch (error) {
+      console.error("Failed to save QR data:", error);
     }
   };
-
   return (
     <div>
       <div className={"flex justify-center items-center ml-5"}>
@@ -100,7 +98,9 @@ export default function Generator() {
             <Drawer className={""}>
               <DrawerTrigger asChild className={""}>
                 <div className={" flex justify-center"}>
-                  <Button className={""}>Generate</Button>
+                  <Button className={""} onClick={handleGenerate}>
+                    Generate
+                  </Button>
                 </div>
               </DrawerTrigger>
 

@@ -23,10 +23,6 @@ const tables = [
         name: "qrcode_info__pgroll_new_Name_key",
         columns: ["Name"],
       },
-      qrcode_info__pgroll_new_qrContent_key: {
-        name: "qrcode_info__pgroll_new_qrContent_key",
-        columns: ["qrContent"],
-      },
     },
     columns: [
       {
@@ -46,18 +42,10 @@ const tables = [
         comment: "",
       },
       {
-        name: "createdAt",
-        type: "text",
-        notNull: false,
-        unique: false,
-        defaultValue: null,
-        comment: "",
-      },
-      {
         name: "qrContent",
         type: "text",
         notNull: true,
-        unique: true,
+        unique: false,
         defaultValue: null,
         comment: "",
       },
