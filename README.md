@@ -39,7 +39,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## What You'll Need
 
 For this project to be able to run on your mechine you'll need  the following libraries , frameworks and technologies:
-
+````bash
 -> React
 -> Next js
 -> kinde
@@ -50,6 +50,7 @@ For this project to be able to run on your mechine you'll need  the following li
 -> Framer-motio
 -> Qr-code-styling
 -> Lucide-react
+````
 
  ## Setting Up Kinde
 
@@ -73,3 +74,4 @@ To install the npm packages run the following commands in your terminal:
  ````bash
  npm i qr-code-styling 
  npm i @zxing/browser
+````
