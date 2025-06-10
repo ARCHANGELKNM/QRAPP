@@ -1,7 +1,11 @@
 "use client";
-
+import Blob from "./Blobs";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import QRCodeStyling from "qr-code-styling";
+import { X } from "lucide-react";
+
 import {
   Card,
   CardContent,
@@ -10,49 +14,76 @@ import {
   CardTitle,
 } from "@components/ui/card";
 import { Input } from "@components/ui/input";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerClose,
-  DrawerTrigger,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
-} from "@/components/ui/drawer";
-import QRcode from "react-qr-code";
 import { Button } from "@components/ui/button";
 
-
 export default function Generator() {
-  const [grade, setGrade] = useState("");
+  const user = useKindeBrowserClient();
   const [name, setName] = useState("");
-  const [qrContent, setQrContent] = useState("");
-  const { user } = useKindeBrowserClient();
   const [surname, setSurname] = useState("");
-  const combinedInputs = name + " " + surname + " " + grade;
+  const [grade, setGrade] = useState("");
+  const [showQR, setShowQR] = useState(false);
 
-  const handleGenerate = async () => {
-    const qrData = {name };
-    const qrString = JSON.stringify(qrData);
-    setQrContent(qrString); // This would be used to render the QR co de
+  const qrRef = useRef(null);
+  const qrCodeInstance = useRef(null);
+  
 
+  const combinedInputs = `${grade} ${name} ${surname}`;
+  const qrData = { name, surname, grade };
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && !qrCodeInstance.current) {
+      qrCodeInstance.current = new QRCodeStyling({
+        width: 300,
+        height: 300,
+        type: "png",
+        data: "default",
+        dotsOptions: {
+          color: "#000",
+          type: "rounded",
+        },
+        backgroundOptions: {
+          color: "#fff",
+        },
+      });
+    }
+  }, []);
+
+  {
+    /* This is what enables the database to get that info to xata */
+  }
+
+  useEffect(() => {
+    if (showQR && qrRef.current && qrCodeInstance.current) {
+      qrCodeInstance.current.update({ data: combinedInputs });
+      qrRef.current.innerHTML = "";
+      qrCodeInstance.current.append(qrRef.current);
+    }
+  }, [showQR, combinedInputs]);
+
+  const handleDownload = () => {
+    if ( qrCodeInstance.current) {
+       qrCodeInstance.current.download({ name: "qr-code", extension: "png" });
+    }
+  };
+
+  const SaveToDB = async () => {
     // Send data to API route
     try {
       const response = await fetch("/api/save-qr", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-             user_id: user.name, //assuming Kinde gives you this
-          ...qrData,
+          user_id: user.name, //assuming Kinde gives you this
+          qrData,
         }),
       });
-
       const result = await response.json();
       console.log("Saved to DB:", result);
     } catch (error) {
       console.error("Failed to save QR data:", error);
     }
   };
+
   return (
     <div>
       <div className={"flex justify-center items-center ml-5"}>
@@ -95,78 +126,47 @@ export default function Generator() {
               onChange={(evt) => setGrade(evt.target.value)}
             />
 
-            <Drawer className={""}>
-              <DrawerTrigger asChild className={""}>
-                <div className={" flex justify-center"}>
-                  <Button className={""} onClick={handleGenerate}>
-                    Generate
-                  </Button>
-                </div>
-              </DrawerTrigger>
-
-              <DrawerContent className={" h-3/4 w-screen "}>
-                <DrawerHeader className={"flex justify-center items-center"}>
-                  <DrawerTitle
-                    className={
-                      "font-bold text-2xl flex justify-center items-center "
-                    }
-                  >
-                    Task Complete
-                  </DrawerTitle>
-
-                  <DrawerDescription></DrawerDescription>
-                </DrawerHeader>
-                <div className={""}>
-                  <div
-                    className={
-                      "absolute top-0 -left-4  w-32 h-32  rounded-full bg-red-300 mix-blend-multiply   blur-xl  animate-blob opacity-70 delay-1000"
-                    }
-                  ></div>
-
-                  <div
-                    className={
-                      "absolute top-0 left-2 w-32 h-32 rounded-full bg-yellow-300 mix-blend-multiply   blur-xl  animate-blob  opacity-70"
-                    }
-                  ></div>
-
-                  <div
-                    className={
-                      "absolute top-0 left-20  w-32 h-32 rounded-full bg-blue-300 mix-blend-multiply   blur-xl  animate-blob  opacity-70"
-                    }
-                  ></div>
-                </div>
-
-                <div className={" flex justify-center"}>
-                  <QRcode
-                    value={combinedInputs}
-                    className={"absolute  mb-5 flex justify-center  "}
-                    fgColor="#000000"
-                  />
-                </div>
-
-                <DrawerClose asChild>
-                  <div className={"flex justify-center"}>
-                    <Button className={"absolute bottom-0"}>Close</Button>
-                  </div>
-                </DrawerClose>
-              </DrawerContent>
-            </Drawer>
+            <Button
+              className="flex justify-centre  text-white px-4 py-2 rounded mt-2"
+              onClick={() => {setShowQR(true);   SaveToDB();}}
+            >
+              Generate
+            </Button>
           </CardContent>
         </Card>
+        <div>
+          <AnimatePresence>
+            {showQR && (
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-6 rounded-t-lg z-50"
+              >
+                <div className="flex justify-between items-center mb-4">
+                 
+                  <button
+                    className="text-gray-500 hover:text-gray-800"
+                    onClick={() => {
+                      setShowQR(false);
+                    
+                    }}
+                  >
+                    <X />
+                  </button>
+                </div>
+
+                <div
+                  ref={qrRef}
+                  onClick={() => handleDownload()}
+                  className="flex justify-center mb-4"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
-}
-
-
-
-{
-  /*
-  
-
-
-
-  
-  
-  */
 }

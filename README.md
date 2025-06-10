@@ -36,18 +36,40 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 
+## What You'll Need
 
-## Hello There what even is this ?
+For this project to be able to run on your mechine you'll need  the following libraries , frameworks and technologies:
 
-
-Hello , I started developing this project in the summer of 2024 , the intial project was inspired by  one of my python projects , where I used python to develope a qrcode generator. This project is quite similar to that one but rather than using python I used Javascript to make it ,it also has a qrcode scanner now so yeah [09-04-25]
-
-
-## what you need
-
-To  be able to modify this project install the following libraries:
-
--> next js
+-> React
+-> Next js
 -> kinde
--> react-qr-code
-->
+-> @zxing/browser
+-> Shadcn components: Card , Dialog , Input , Button , avatar , Sidebar1 
+-> Tailwind CSS
+-> Xata
+-> Framer-motio
+-> Qr-code-styling
+-> Lucide-react
+
+ ## Setting Up Kinde
+
+ To set up Kinde on your computer , follow the steps described here : https://docs.kinde.com/authenticate/authentication-methods/set-up-user-authentication/
+
+
+
+ ## Setting Up Xata
+
+ To set up set up Xata , read the documentation described here : https://lite.xata.io/docs/getting-started/nextjs
+
+
+ ## Setting Up Shadcn 
+
+ to set up Shadcn read this : https://ui.shadcn.com/docs/installation/next and then install the required components under the guidance of the docs 
+
+## Setting Up The NPM Packages
+
+To install the npm packages run the following commands in your terminal:
+
+ ````bash
+ npm i qr-code-styling 
+ npm i @zxing/browser

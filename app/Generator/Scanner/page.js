@@ -34,12 +34,7 @@ const QrScanner = () => {
           }
         }
       );
-    }
-    return () => {
-      if (codeReader.current) {
-        codeReader.current.reset();
-      }
-    };
+    }  
   }, [loading]);
 
   useEffect(() => {
@@ -75,7 +70,7 @@ const QrScanner = () => {
 
         {/* Animated Scan Line */}
         <motion.div
-          className="absolute left-1/2 w-3/4 h-0.5 bg-red-500 rounded-full opacity-80"
+          className="absolute left-1/2 w-3/4 h-0.5 bg-blue-500 rounded-full opacity-80"
           style={{ transform: "translateX(-50%)" }}
           initial={{ top: "15%" }}
           animate={{ top: "85%" }}
@@ -112,13 +107,13 @@ const QrScanner = () => {
                 <p className="text-gray-700 text-sm sm:text-base break-words">
                   {qrResult}
                 </p>
-                <button
+                <Button
                   onClick={handleReset}
-                  className="mt-6 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white text-base rounded-full shadow-md"
+                  className="mt-6 px-5 py-3  text-white text-base rounded-full shadow-md"
                 >
                   Scan Another
-                </button>
-                <p className="text-gray-500 mt-2 text-xs">(Auto-reset in 5s)</p>
+                </Button>
+                <p className="text-gray-500 mt-2 text-xs">(Auto-reset in 60s)</p>
               </div>
             </motion.div>
           </>

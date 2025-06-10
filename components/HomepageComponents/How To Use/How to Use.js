@@ -9,7 +9,7 @@ export default function HowToUse() {
     <section className="py-20 bg-white text-black px-4">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-4xl font-bold text-center mb-16">
-          How It Works
+          How To Use It
         </h2>
 
         <div className="flex flex-col md:flex-row md:justify-between items-center gap-12">

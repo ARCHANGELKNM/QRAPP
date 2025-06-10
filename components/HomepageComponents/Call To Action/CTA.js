@@ -2,8 +2,10 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button"; // Shadcn Button
+import { useRouter } from "next/navigation";
 
 export default function CTA () {
+    const route = useRouter();
   return (
     <section className="relative flex flex-col items-center justify-center text-center py-20 bg-gray-100 dark:bg-gray-900 overflow-hidden">
       {/* Animated light background */}
@@ -28,11 +30,15 @@ export default function CTA () {
         </p>
 
         <div className="flex gap-4 justify-center">
-          <Button className="px-8 py-4 text-lg font-semibold animate-background-move bg-gradient-to-r from-primary to-secondary bg-size-200 bg-pos-0 hover:bg-pos-100 transition-all duration-700">
+          <Button
+            onClick={() => route.push("/Generator")}
+            className="px-8 py-4 text-lg font-semibold animate-background-move bg-gradient-to-r from-primary to-secondary bg-size-200 bg-pos-0 hover:bg-pos-100 transition-all duration-700"
+          >
             Get Started
           </Button>
 
           <Button
+            onClick={() => route.push("/Generator/Scanner") }
             variant="outline"
             className="px-8 py-4 text-lg font-semibold border-primary dark:border-primary hover:bg-primary/10 transition-all duration-300"
           >
