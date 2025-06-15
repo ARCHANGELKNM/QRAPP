@@ -74,23 +74,27 @@ export default function Home() {
               <ECards />
             </CardContent>
           </Card>
+
+          
         </div>
 
         <div>
           <HowToUse />
+
+        
         </div>
 
         <div>
           <Features />
         </div>
-        
+
         <div>
-          <WQR/>
+          <WQR />
         </div>
-  
-       <div>
-          <CTA/>
-       </div> 
+
+        <div>
+          <CTA />
+        </div>
       </div>
     </section>
   );

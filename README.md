@@ -47,9 +47,10 @@ For this project to be able to run on your mechine you'll need  the following li
 -> Shadcn components: Card , Dialog , Input , Button , avatar , Sidebar1 
 -> Tailwind CSS
 -> Xata
--> Framer-motio
+-> Framer-motion
 -> Qr-code-styling
 -> Lucide-react
+-> AOS
 ````
 
  ## Setting Up Kinde
@@ -74,4 +75,5 @@ To install the npm packages run the following commands in your terminal:
  ````bash
  npm i qr-code-styling 
  npm i @zxing/browser
+ npm i Framer-motion
 ````

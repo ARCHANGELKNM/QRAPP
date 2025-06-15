@@ -22,8 +22,9 @@ import {
   RegisterLink,
 } from "@kinde-oss/kinde-auth-nextjs/components";
 import { Button } from "@components/ui/button";
+import { Separator } from "./ui/separator";
 
-// This is sample data.
+
 
 const menuItems = [
   {
@@ -53,10 +54,13 @@ export function AppSidebar(index) {
   const { user } = useKindeBrowserClient();
   return (
     <Sidebar>
-      <SidebarHeader className={" font-bold"}>
+      <SidebarHeader className={"flex justify-center font-bold"}>
         QrApp
         {/* <SearchForm /> */}
       </SidebarHeader>
+
+      <Separator className={"  "}/>
+       
       <SidebarContent key={index}>
         {menuItems.map((item) => (
           <SidebarMenu>
@@ -70,16 +74,16 @@ export function AppSidebar(index) {
 
         <SidebarFooter>
           {!isAuthenticated ? (
-            <div>
-              <div className="flex justify-center">
+            <div className="flex-col justify-center ">
+              <div>
                 <LoginLink>
-                  <Button className={"  absolute right-0 bottom-0 h-6 ml-4"}>
-                    LogIn
+                  <Button className={"  absolute  bottom-2 h-6 ml-5"}>
+                    Log In
                   </Button>
                 </LoginLink>
 
                 <RegisterLink>
-                  <Button className={"  absolute right-16 bottom-0 mr-2  h-6"}>
+                  <Button className={"  absolute  right-4 bottom-2 mr-5 h-6"}>
                     Sign Up
                   </Button>
                 </RegisterLink>
@@ -88,7 +92,7 @@ export function AppSidebar(index) {
           ) : (
             <div>
               <div className={" flex "}>
-                <Avatar className={" absolute left-0 bottom-0 w-9 h-9 "}>
+                <Avatar className={" absolute left-2 bottom-0 w-9 h-9 "}>
                   <AvatarImage>
                     <Image
                       alt={""}
@@ -98,7 +102,7 @@ export function AppSidebar(index) {
                     />
                   </AvatarImage>
 
-                  <AvatarFallback>hi</AvatarFallback>
+                  <AvatarFallback> {user?.name} </AvatarFallback>
                 </Avatar>
               </div>
             </div>

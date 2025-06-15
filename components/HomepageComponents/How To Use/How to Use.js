@@ -3,14 +3,13 @@
 
 import { motion } from "framer-motion";
 import { Pencil, Download, Scan, MousePointerClick } from "lucide-react";
+import GeneratorButton from "@components/Generate Button/GeneratorButton";
 
 export default function HowToUse() {
   return (
     <section className="py-20 bg-white text-black px-4">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-bold text-center mb-16">
-          How To Use It
-        </h2>
+      <div className="max-w-6xl mx-auto mb-6">
+        <h2 className="text-4xl font-bold text-center mb-16">How To Use It</h2>
 
         <div className="flex flex-col md:flex-row md:justify-between items-center gap-12">
           {/* Step 1 */}
@@ -25,7 +24,9 @@ export default function HowToUse() {
             </div>
             <div>
               <h3 className="text-xl font-semibold">Step 1</h3>
-              <p className="text-gray-400 mt-2">Navigate to the QR Generator</p>
+              <p className="text-gray-400 mt-2">
+                Navigate To The QR Generator Page
+              </p>
             </div>
           </motion.div>
 
@@ -41,7 +42,7 @@ export default function HowToUse() {
             </div>
             <div>
               <h3 className="text-xl font-semibold">Step 2</h3>
-              <p className="text-gray-400 mt-2">Fill in the required fields</p>
+              <p className="text-gray-400 mt-2">Fill In The Required Fields</p>
             </div>
           </motion.div>
 
@@ -57,7 +58,7 @@ export default function HowToUse() {
             </div>
             <div>
               <h3 className="text-xl font-semibold">Step 3</h3>
-              <p className="text-gray-400 mt-2">Click on the Generate button</p>
+              <p className="text-gray-400 mt-2">Click On The Generate Button</p>
             </div>
           </motion.div>
 
@@ -73,9 +74,12 @@ export default function HowToUse() {
             </div>
             <div>
               <h3 className="text-xl font-semibold">Step 4</h3>
-              <p className="text-gray-400 mt-2">Click on the QR Code to download it</p>
+              <p className="text-gray-400 mt-2">
+                Click On The QR Code To Download It
+              </p>
             </div>
           </motion.div>
+
         </div>
       </div>
     </section>

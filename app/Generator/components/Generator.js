@@ -73,7 +73,7 @@ export default function Generator() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_id: user.name, //assuming Kinde gives you this
+          user_id: user?.email, //assuming Kinde gives you this
           qrData,
         }),
       });
