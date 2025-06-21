@@ -52,6 +52,8 @@ const menuItems = [
 export function AppSidebar(index) {
   const { isAuthenticated } = useKindeBrowserClient();
   const { user } = useKindeBrowserClient();
+  const initials =
+    (user?.given_name?.charAt(0) || "") + (user?.family_name?.charAt(0) || "");
   return (
     <Sidebar>
       <SidebarHeader className={"flex justify-center font-bold"}>
@@ -59,8 +61,8 @@ export function AppSidebar(index) {
         {/* <SearchForm /> */}
       </SidebarHeader>
 
-      <Separator className={"  "}/>
-       
+      <Separator className={"  "} />
+
       <SidebarContent key={index}>
         {menuItems.map((item) => (
           <SidebarMenu>
@@ -91,8 +93,12 @@ export function AppSidebar(index) {
             </div>
           ) : (
             <div>
-              <div className={" flex "}>
-                <Avatar className={" absolute left-2 bottom-0 w-9 h-9 "}>
+              <div
+                className={
+                  " flex place-items-center h-12 w-40 absolute bottom-0 mb-3 hover:rounded-sm  hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]"
+                }
+              >
+                <Avatar className={"  w-9 h-9 mr-2"}>
                   <AvatarImage>
                     <Image
                       alt={""}
@@ -102,8 +108,12 @@ export function AppSidebar(index) {
                     />
                   </AvatarImage>
 
-                  <AvatarFallback> {user?.name} </AvatarFallback>
+                  <AvatarFallback> {initials} </AvatarFallback>
                 </Avatar>
+
+                <span className={" text-xs text-slate-500 "}>
+                  {user?.given_name} {user?.family_name}
+                </span>
               </div>
             </div>
           )}

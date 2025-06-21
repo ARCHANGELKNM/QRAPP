@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import { motion, AnimatePresence } from "framer-motion";
+import {Button} from "@components/ui/button";
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center h-screen bg-black">
@@ -102,7 +103,7 @@ const QrScanner = () => {
             >
               <div className="bg-white/90 backdrop-blur-lg p-6 rounded-2xl shadow-2xl text-center w-full">
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                  QR Result
+                  The Results Are In 
                 </h3>
                 <p className="text-gray-700 text-sm sm:text-base break-words">
                   {qrResult}

@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {Image} from "next/image";
+import { Image } from "next/image";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import {
   LogoutLink,
@@ -15,6 +15,8 @@ import { CircleUser } from "lucide-react";
 export default function page() {
   const { isAuthenticated } = useKindeBrowserClient();
   const { user } = useKindeBrowserClient();
+  const initials =
+    (user?.given_name?.charAt(0) || "") + (user?.family_name?.charAt(0) || "");
 
   return (
     <div>
@@ -85,8 +87,7 @@ export default function page() {
                 </AvatarImage>
 
                 <AvatarFallback>
-                  {" "}
-                  <CircleUser className={"w-72 h-72"} />
+                  <h2 className={" font-semibold  text-4xl  "}>{initials}</h2>
                 </AvatarFallback>
               </Avatar>
             </div>
