@@ -1,6 +1,6 @@
 "use client";
 import Blob from "./Blobs";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import QRCodeStyling from "qr-code-styling";
@@ -17,7 +17,7 @@ import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 
 export default function Generator() {
-  const user = useKindeBrowserClient();
+  const user = useKindeAuth();
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [grade, setGrade] = useState("");
@@ -25,10 +25,11 @@ export default function Generator() {
 
   const qrRef = useRef(null);
   const qrCodeInstance = useRef(null);
-  
 
   const combinedInputs = `${grade} ${name} ${surname}`;
   const qrData = { name, surname, grade };
+  const UserName = `${user?.given_name}`;
+  const UserId = `${user?.email}`;
 
   useEffect(() => {
     if (typeof window !== "undefined" && !qrCodeInstance.current) {
@@ -61,19 +62,19 @@ export default function Generator() {
   }, [showQR, combinedInputs]);
 
   const handleDownload = () => {
-    if ( qrCodeInstance.current) {
-       qrCodeInstance.current.download({ name: "qr-code", extension: "png" });
+    if (qrCodeInstance.current) {
+      qrCodeInstance.current.download({ name: "qr-code", extension: "png" });
     }
   };
 
   const SaveToDB = async () => {
-    // Send data to API route
+    // Sends data to API route
+
     try {
       const response = await fetch("/api/save-qr", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_id: user?.email, //assuming Kinde gives you this
           qrData,
         }),
       });
@@ -128,7 +129,10 @@ export default function Generator() {
 
             <Button
               className="flex justify-centre  text-white px-4 py-2 rounded mt-2"
-              onClick={() => {setShowQR(true);   SaveToDB();}}
+              onClick={() => {
+                setShowQR(true);
+                SaveToDB();
+              }}
             >
               Generate
             </Button>
@@ -142,15 +146,13 @@ export default function Generator() {
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-6 rounded-t-lg z-50"
+                className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-6 rounded-t-lg z-50 h-2/3 "
               >
-                <div className="flex justify-between items-center mb-4">
-                 
+                <div className="flex justify-between items-center mb-4 ">
                   <button
                     className="text-gray-500 hover:text-gray-800"
                     onClick={() => {
                       setShowQR(false);
-                    
                     }}
                   >
                     <X />
@@ -160,7 +162,7 @@ export default function Generator() {
                 <div
                   ref={qrRef}
                   onClick={() => handleDownload()}
-                  className="flex justify-center mb-4"
+                  className="flex justify-center "
                 />
               </motion.div>
             )}
