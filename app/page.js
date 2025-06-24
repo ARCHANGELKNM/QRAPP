@@ -36,7 +36,7 @@ export default function Home() {
         </h3>
 
         <p className={" relative flex justify-center font-semibold  mb-1     "}>
-          Generate beautiful qrcodes for free
+          Generate beautiful QR codes for free
         </p>
 
         <GeneratorButton />
@@ -44,22 +44,17 @@ export default function Home() {
         <div className={"flex justify-center place-items-center mb-4"}>
           <Card
             className={
-              " relative  h-4/5 w-3/4   sm:w-3/4 sm:h-96 xl:h-96 xl:w-3/4  xl:mb-5 bg-transparent"
+              " relative  h-min  w-3/4   sm:w-3/4 sm:h-96  xl:w-3/4  xl:mb-5 bg-transparent"
             }
             data-aos="fade-up"
           >
             <CardHeader className={" top-0 "}>
               <CardTitle className={"font-bold text-2xl mb-5 "}>
-                What Are Qrcodes
+                What Are Qr codes
               </CardTitle>
             </CardHeader>
 
             <CardContent>
-              {/*
-                  <h3 className={'mb-5 break-all'}>
-                    QRCODE stands for Quick Response Code
-                 </h3>
-                 */}
 
               <div className={"w-60"}>
                 <p className={"mb-5 font-semibold"}>
@@ -71,7 +66,9 @@ export default function Home() {
                 </p>
               </div>
 
-              <ECards />
+              <ECards  className={" mb-10"}/>
+
+               
             </CardContent>
           </Card>
 
