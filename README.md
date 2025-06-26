@@ -67,7 +67,7 @@ For this project to be able to run on your mechine you'll need  the following li
 
 -  Step 2:   Run this command for you to log in  ```` npx xata auth login ````
 
- - Step 3:   In your browser create a xata workspace then create a database then within that database create a table and create a column called UserName  another one called UserId and another one called qrContent. Once that is done define your schema for that table as follows:
+ - Step 3:   Create a xata workspace then create a database then within that database create a table and create a column called UserName  another one called UserId and another one called qrContent. Once that is done define your schema for that table as follows:
 
  - UserName: String , can be null 
  -  UserId: String , can be null 
