@@ -10,10 +10,10 @@ export default function GeneratorButton() {
         variant="outline"
         onClick={() => route.push("/Generator/Scanner ")}
       >
-        Scan a Qr Code
+        Scan a Qr-Code
       </Button>
       <Button className={" mb-5"} onClick={() => route.push("/Generator")}>
-        Generate a Qr Code
+        Generate a Qr-Code
       </Button>
     </div>
   );

@@ -23,7 +23,7 @@ export default function CTA () {
 
       <div className="relative z-10 space-y-6">
         <h2 className="text-4xl font-bold text-gray-900 dark:text-white">
-          Ready to Generate or Scan your QR code?
+          Ready to Generate or Scan your QR-Code?
         </h2>
         <p className="text-gray-600 dark:text-gray-300 text-lg">
           It's fast, simple, and totally free.
@@ -42,7 +42,7 @@ export default function CTA () {
             variant="outline"
             className="px-8 py-4 text-lg font-semibold border-primary dark:border-primary hover:bg-primary/10 transition-all duration-300"
           >
-            Scan a Qrcode
+            Scan a Qr-Code
           </Button>
         </div>
       </div>
