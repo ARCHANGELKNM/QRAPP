@@ -68,7 +68,14 @@ export default function page() {
             className={"absolute right-0 bottom-5 w-23 mr-5 "}
           >
             <AlertTitle>You Don't Have An Account ?</AlertTitle>
-            <AlertDescription>Please sign in or Log in.</AlertDescription>
+            <AlertDescription className={"flex space-x-5"}>
+              <p>
+                Please
+                <RegisterLink className={"underline"}> Sign in </RegisterLink>
+                or
+                <LoginLink className={" underline"}> Log in.</LoginLink>
+              </p>
+            </AlertDescription>
           </Alert>
         </div>
       ) : (

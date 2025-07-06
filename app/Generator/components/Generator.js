@@ -1,11 +1,9 @@
 "use client";
-import Blob from "./Blobs";
-import { useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
+
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import QRCodeStyling from "qr-code-styling";
 import { X } from "lucide-react";
-
 import {
   Card,
   CardContent,
@@ -17,7 +15,6 @@ import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 
 export default function Generator() {
-  const user = useKindeAuth();
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [grade, setGrade] = useState("");
@@ -25,11 +22,8 @@ export default function Generator() {
 
   const qrRef = useRef(null);
   const qrCodeInstance = useRef(null);
-
   const combinedInputs = `${grade} ${name} ${surname}`;
   const qrData = { name, surname, grade };
-  const UserName = `${user?.given_name}`;
-  const UserId = `${user?.email}`;
 
   useEffect(() => {
     if (typeof window !== "undefined" && !qrCodeInstance.current) {
@@ -63,7 +57,7 @@ export default function Generator() {
 
   const handleDownload = () => {
     if (qrCodeInstance.current) {
-      qrCodeInstance.current.download({ name: "qr-code", extension: "png" });
+      qrCodeInstance.current.download({ name: `${name}`, extension: "png" });
     }
   };
 
