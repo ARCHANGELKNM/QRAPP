@@ -101,7 +101,7 @@ const QrScanner = () => {
               transition={{ duration: 0.4 }}
               className="absolute inset-0 z-20 flex flex-col justify-center items-center p-6"
             >
-              <div className="bg-white/90 backdrop-blur-lg p-6 rounded-2xl shadow-2xl text-center w-full">
+              <div className="bg-white/90 backdrop-blur-lg p-6 rounded-2xl shadow-2xl text-center w-1/2">
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">
                   The Results Are In 
                 </h3>
