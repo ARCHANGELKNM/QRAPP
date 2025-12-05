@@ -1,17 +1,17 @@
 "use client";
 
-import { Button } from "@components/ui/button";
+import { Button } from "@Components/ui/button";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
-import GeneratorButton from "@components/Generate Button/GeneratorButton";
+import { Card, CardContent, CardHeader, CardTitle } from "@Components/ui/card";
+import GeneratorButton from "@Components/Generate Button/GeneratorButton";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import ECards from "@components/HomepageComponents/explaintory cards";
-import HowToUse from "@components/HomepageComponents/How To Use/How to Use";
-import Features from "@components/HomepageComponents/Feature List/Feature List";
-import CTA from "@components/HomepageComponents/Call To Action/CTA";
-import WQR from "@components/HomepageComponents/Why Qrcodes/WQR";
+import ECards from "@Components/HomePage Componets/Feature Cards/FeatureCards";
+import HowToUse from "@Components/HomePage Componets/How To Use/How to Use";
+import Features from "@Components/HomePage Componets/Feature List/Feature List";
+import CTA from "@Components/HomePage Componets/Call To Action/CallToAction";
+import WQR from "@Components/HomePage Componets/Why Qrcodes/WQR";
 
 export default function Home() {
   const route = useRouter();
@@ -55,7 +55,6 @@ export default function Home() {
             </CardHeader>
 
             <CardContent>
-
               <div className={"w-60"}>
                 <p className={"mb-5 font-semibold"}>
                   A QR-Code, quick-response code, is a type of two-dimensional
@@ -66,19 +65,13 @@ export default function Home() {
                 </p>
               </div>
 
-              <ECards  className={" mb-10"}/>
-
-               
+              <ECards className={" mb-10"} />
             </CardContent>
           </Card>
-
-          
         </div>
 
         <div>
           <HowToUse />
-
-        
         </div>
 
         <div>

@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button"; // Shadcn Button
+import { Button } from "@Components/ui/button"; // Shadcn Button
 import { useRouter } from "next/navigation";
 
-export default function CTA () {
-    const route = useRouter();
+export default function CTA() {
+  const route = useRouter();
   return (
     <section className="relative flex flex-col items-center justify-center text-center py-20 bg-gray-100 dark:bg-gray-900 overflow-hidden">
       {/* Animated light background */}
@@ -38,7 +38,7 @@ export default function CTA () {
           </Button>
 
           <Button
-            onClick={() => route.push("/Generator/Scanner") }
+            onClick={() => route.push("/Generator/Scanner")}
             variant="outline"
             className="px-8 py-4 text-lg font-semibold border-primary dark:border-primary hover:bg-primary/10 transition-all duration-300"
           >

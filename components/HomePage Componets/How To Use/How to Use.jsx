@@ -2,8 +2,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Pencil, Download,  MousePointerClick, QrCode } from "lucide-react";
-import GeneratorButton from "@components/Generate Button/GeneratorButton";
+import { Pencil, Download, MousePointerClick, QrCode } from "lucide-react";
+import GeneratorButton from "@Components/Generate Button/GeneratorButton";
 
 export default function HowToUse() {
   return (
@@ -20,7 +20,7 @@ export default function HowToUse() {
             className="flex flex-col items-center text-center space-y-4"
           >
             <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-black shadow-lg">
-              < QrCode size={40} />
+              <QrCode size={40} />
             </div>
             <div>
               <h3 className="text-xl font-semibold">Step 1</h3>
@@ -79,7 +79,6 @@ export default function HowToUse() {
               </p>
             </div>
           </motion.div>
-
         </div>
       </div>
     </section>

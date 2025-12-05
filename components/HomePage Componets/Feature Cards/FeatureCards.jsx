@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@Components/ui/card";
 import { CircleX } from "lucide-react";
 import { ClockArrowDownIcon } from "lucide-react";
 import { LucideEarthLock } from "lucide-react";
@@ -48,7 +48,9 @@ export default function ECards() {
             "sm:flex sm:justify-center sm:h-60 sm:w-48 sm:place-content-center "
           }
         >
-          <ClockArrowDownIcon className={"  flex justify-center h-0 w-0 sm:h-36 sm:w-40"} />
+          <ClockArrowDownIcon
+            className={"  flex justify-center h-0 w-0 sm:h-36 sm:w-40"}
+          />
         </div>
       </Card>
 

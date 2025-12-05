@@ -1,7 +1,7 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "@Components/ui/avatar";
+import { Alert, AlertDescription, AlertTitle } from "@Components/ui/alert";
 import { Image } from "next/image";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import {
@@ -9,7 +9,7 @@ import {
   LoginLink,
   RegisterLink,
 } from "@kinde-oss/kinde-auth-nextjs/components";
-import { Button } from "@components/ui/button";
+import { Button } from "@Components/ui/button";
 import { CircleUser } from "lucide-react";
 
 export default function page() {

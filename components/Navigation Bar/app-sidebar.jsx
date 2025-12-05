@@ -12,19 +12,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
+} from "@Components/ui/sidebar";
 import Link from "next/link";
 import { useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@Components/ui/avatar";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import {
   LoginLink,
   RegisterLink,
 } from "@kinde-oss/kinde-auth-nextjs/components";
-import { Button } from "@components/ui/button";
+import { Button } from "@Components/ui/button";
 import { Separator } from "./ui/separator";
-
-
 
 const menuItems = [
   {

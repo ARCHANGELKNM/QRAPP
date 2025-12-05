@@ -5,8 +5,8 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Button } from "@components/ui/button";
+} from "@Components/ui/sidebar";
+import { Button } from "@Components/ui/button";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import {
   LoginLink,
@@ -15,7 +15,7 @@ import {
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@Components/ui/avatar";
 
 export default function Nav() {
   useEffect(() => {
@@ -30,7 +30,6 @@ export default function Nav() {
       <SidebarInset className={"m-0"}>
         <header className=" sticky top-0 flex h-10 shrink-0 items-center gap-2 border-b m-0 ">
           <SidebarTrigger className="-ml-1" />
- 
         </header>
       </SidebarInset>
     </SidebarProvider>
