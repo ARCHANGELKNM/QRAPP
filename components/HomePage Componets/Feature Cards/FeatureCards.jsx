@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@Components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { CircleX } from "lucide-react";
 import { ClockArrowDownIcon } from "lucide-react";
 import { LucideEarthLock } from "lucide-react";

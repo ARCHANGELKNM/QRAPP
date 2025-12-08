@@ -1,4 +1,4 @@
-import Generator from "../../../Components/Generator Page Components/Generator/Generator";
+import Generator from "../../../components/Generator Page Components/Generator/Generator";
 
 export default function Page() {
   return (

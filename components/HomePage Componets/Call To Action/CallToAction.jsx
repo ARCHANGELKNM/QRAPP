@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@Components/ui/button"; // Shadcn Button
+import { Button } from "@components/ui/button"; // Shadcn Button
 import { useRouter } from "next/navigation";
 
 export default function CTA() {

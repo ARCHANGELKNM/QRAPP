@@ -9,7 +9,8 @@ For this project to be able to run on your mechine you'll need  the following li
 -> @zxing/browser
 -> Shadcn components: Card , Dialog , Input , Button , avatar , Sidebar1 
 -> Tailwind CSS
--> Xata
+-> Neon
+-> Drizzle orm
 -> Framer-motion
 -> Qr-code-styling
 -> Lucide-react
@@ -30,26 +31,7 @@ For this project to be able to run on your mechine you'll need  the following li
 
  - Step 5 :  And you are done . That was simple right ? 
 
-
-
- ## Setting Up Xata
-
- To set up set up Xata , read the documentation described here : https://lite.xata.io/docs/getting-started/nextjs. But if you think that take up too much time follow this guide. Take note for this to work you need to have a Xata accounnt , a Xata workspace , database and a table :
-
- - Step 1:   Install Xata using the commands ```` npm install @xata.io/cli or npm install -g @xata.io/cli ````
-
--  Step 2:   Run this command for you to log in  ```` npx xata auth login ````
-
- - Step 3:   Create a xata workspace then create a database then within that database create a table and create a column called UserName  another one called UserId and another one called qrContent. Once that is done define your schema for that table as follows:
-
- - UserName: String , can be null 
- -  UserId: String , can be null 
- -  qrContent: String , can be null 
- 
--  Step 4:   Create .xatarc and src/xata.js file by running the command following command and select the workspace and database where you create the create in Step 3 table  ```` npx xata init and npx xata codegen```` 
-            
-            
- 
+## Setting up the Neon
 
  ## Setting Up Shadcn 
 
@@ -62,5 +44,8 @@ To install the npm packages run the following commands in your terminal:
  ````bash
  npm i qr-code-styling 
  npm i @zxing/browser
- npm i Framer-motion
+ npm i framer-motion
+ npm i react-icons
+ npm i aos 
+ 
 ````

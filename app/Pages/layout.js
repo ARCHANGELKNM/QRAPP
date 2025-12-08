@@ -1,8 +1,8 @@
-import Nav from "@Components/Navigation Bar/NavBar";
+import NavigationBar from "@components/Navigation Bar/NavBar";
 import "../globals.css";
 
 export const metadata = {
-  title: "QRAPP",
+  title: "QRA",
   description: "",
 };
 
@@ -11,16 +11,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <div>
-          <div>
-            <Nav />
-          </div>
+          <NavigationBar />
 
           {children}
-
-          {/*
-         <div className="relative w-16 h-16 bg-green-300 top-0 sm:bg-violet-900 md:bg-blue-500  lg:bg-teal-700 xl:bg-yellow-600 2xl:bg-orange-300">
-        </div> 
-        */}
         </div>
       </body>
     </html>

@@ -1,17 +1,17 @@
 "use client";
 
-import { Button } from "@Components/ui/button";
+import { Button } from "@components/ui/button";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@Components/ui/card";
-import GeneratorButton from "@Components/Generate Button/GeneratorButton";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
+import GeneratorButton from "@components/HomePage Componets/Generate Button/GeneratorButton";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import ECards from "@Components/HomePage Componets/Feature Cards/FeatureCards";
-import HowToUse from "@Components/HomePage Componets/How To Use/How to Use";
-import Features from "@Components/HomePage Componets/Feature List/Feature List";
-import CTA from "@Components/HomePage Componets/Call To Action/CallToAction";
-import WQR from "@Components/HomePage Componets/Why Qrcodes/WQR";
+import ECards from "@components/HomePage Componets/Feature Cards/FeatureCards";
+import HowToUse from "@components/HomePage Componets/How To Use/How to Use";
+import Features from "@components/HomePage Componets/Feature List/Feature List";
+import CTA from "@components/HomePage Componets/Call To Action/CallToAction";
+import WQR from "@components/HomePage Componets/Why Qrcodes/WQR";
 
 export default function Home() {
   const route = useRouter();

@@ -1,4 +1,4 @@
-import { Button } from "@Components/ui/button";
+import { Button } from "@components/ui/button";
 import { useRouter } from "next/navigation";
 
 export default function GeneratorButton() {
@@ -8,11 +8,14 @@ export default function GeneratorButton() {
       <Button
         className={" mr-5 mb-5  border-primary  "}
         variant="outline"
-        onClick={() => route.push("/Generator/Scanner")}
+        onClick={() => route.push("/Pages/Scanner")}
       >
         Scan a Qr-Code
       </Button>
-      <Button className={" mb-5"} onClick={() => route.push("/Generator")}>
+      <Button
+        className={" mb-5"}
+        onClick={() => route.push("/Pages/Generator")}
+      >
         Generate a Qr-Code
       </Button>
     </div>

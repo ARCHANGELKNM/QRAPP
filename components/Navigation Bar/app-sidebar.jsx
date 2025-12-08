@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { LucideQrCode, ScanIcon, Settings, Settings2 } from "lucide-react";
+import { LucideQrCode, ScanIcon, Settings} from "lucide-react";
 import {
   Sidebar,
   SidebarFooter,
@@ -12,17 +12,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@Components/ui/sidebar";
+} from "@components/ui/sidebar";
 import Link from "next/link";
-import { useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@Components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import {
   LoginLink,
   RegisterLink,
 } from "@kinde-oss/kinde-auth-nextjs/components";
-import { Button } from "@Components/ui/button";
-import { Separator } from "./ui/separator";
+import { Button } from "@components/ui/button";
+import { Separator } from "@components/ui/separator";
 
 const menuItems = [
   {

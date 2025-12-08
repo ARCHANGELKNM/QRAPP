@@ -1,29 +1,21 @@
 "use client";
 
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/Navigation Bar/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@Components/ui/sidebar";
-import { Button } from "@Components/ui/button";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import {
-  LoginLink,
-  RegisterLink,
-} from "@kinde-oss/kinde-auth-nextjs/components";
+} from "@components/ui/sidebar";
+
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@Components/ui/avatar";
 
-export default function Nav() {
+export default function NavigationBar() {
   useEffect(() => {
     AOS.init({});
   }, []);
 
-  const { isAuthenticated } = useKindeBrowserClient();
-  const { user } = useKindeBrowserClient();
   return (
     <SidebarProvider>
       <AppSidebar />

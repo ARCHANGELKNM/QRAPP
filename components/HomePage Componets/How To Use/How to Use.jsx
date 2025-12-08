@@ -3,7 +3,7 @@
 
 import { motion } from "framer-motion";
 import { Pencil, Download, MousePointerClick, QrCode } from "lucide-react";
-import GeneratorButton from "@Components/Generate Button/GeneratorButton";
+import GeneratorButton from "@components/HomePage Componets/Generate Button/GeneratorButton";
 
 export default function HowToUse() {
   return (

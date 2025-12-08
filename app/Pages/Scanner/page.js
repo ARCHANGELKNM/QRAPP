@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@Components/ui/button";
+import { Button } from "@components/ui/button";
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center h-screen bg-black">

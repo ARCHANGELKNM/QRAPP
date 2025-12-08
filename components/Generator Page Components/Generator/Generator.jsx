@@ -10,12 +10,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@Components/ui/card";
-import { Input } from "@Components/ui/input";
-import { Button } from "@Components/ui/button";
+} from "@components/ui/card";
+import { Input } from "@components/ui/input";
+import { Button } from "@components/ui/button";
 
 export default function Generator() {
-
   return (
     <div>
       <div className={"flex justify-center items-center ml-5"}>
