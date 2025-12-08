@@ -15,69 +15,6 @@ import { Input } from "@Components/ui/input";
 import { Button } from "@Components/ui/button";
 
 export default function Generator() {
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [grade, setGrade] = useState("");
-  const [showQR, setShowQR] = useState(false);
-
-  const qrRef = useRef(null);
-  const qrCodeInstance = useRef(null);
-  const combinedInputs = `${grade} ${name} ${surname}`;
-  const qrData = { name, surname, grade };
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && !qrCodeInstance.current) {
-      qrCodeInstance.current = new QRCodeStyling({
-        width: 300,
-        height: 300,
-        type: "png",
-        data: "default",
-        dotsOptions: {
-          color: "#000",
-          type: "rounded",
-        },
-        backgroundOptions: {
-          color: "#fff",
-        },
-      });
-    }
-  }, []);
-
-  {
-    /* This is what enables the database to get that info to xata */
-  }
-
-  useEffect(() => {
-    if (showQR && qrRef.current && qrCodeInstance.current) {
-      qrCodeInstance.current.update({ data: combinedInputs });
-      qrRef.current.innerHTML = "";
-      qrCodeInstance.current.append(qrRef.current);
-    }
-  }, [showQR, combinedInputs]);
-
-  const handleDownload = () => {
-    if (qrCodeInstance.current) {
-      qrCodeInstance.current.download({ name: `${name}`, extension: "png" });
-    }
-  };
-
-  const SaveToDB = async () => {
-    // Sends data to API route
-
-    try {
-      const response = await fetch("/api/save-qr", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          qrData,
-        }),
-      });
-      const result = await response.json();
-      console.log("Saved to DB:", result);
-    } catch (error) {
-      console.error("Failed to save QR data:", error);
-    }
-  };
 
   return (
     <div>

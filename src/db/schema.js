@@ -1,13 +1,30 @@
-import { pgTable, serial, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
 
-export const qrCodes = pgTable("qr_codes", {
+export const institutions = pgTable("institutions", {
   id: serial("id").primaryKey(),
-  data: varchar("data", { length: 255 }).notNull(),
+  name: text("name").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const scanHistory = pgTable("scan_history", {
+export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  qrId: varchar("qr_id", { length: 50 }),
-  scannedAt: timestamp("scanned_at").defaultNow(),
+  name: text("name").notNull(),
+  surname: text("surname").notNull(),
+  email: text("email"),
+  institutionId: integer("institution_id")
+    .references(() => institutions.id)
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const qrCodes = pgTable("qr_codes", {
+  id: serial("id").primaryKey(),
+  content: text("content").notNull(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
+  institutionId: integer("institution_id")
+    .references(() => institutions.id)
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 });
