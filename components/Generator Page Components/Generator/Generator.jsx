@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -15,17 +16,86 @@ import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 
 export default function Generator() {
+  // USER INFO
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [grade, setGrade] = useState("");
+  const [institution, setInstitution] = useState("");
+
+  // UI / QR
+  const [showQR, setShowQR] = useState(false);
+  const qrRef = useRef(null);
+  const qrCode = useRef(null);
+
+  // Load user profile from DB through API
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await fetch("/api/profile");
+
+        if (!res.ok) {
+          console.error("Profile fetch failed");
+          return;
+        }
+
+        const data = await res.json();
+
+        // Prefill fields
+        setName(data.Name || "");
+        setSurname(data.Surname || "");
+        setGrade(data.Grade || "");
+        setInstitution(data.Institution || "");
+      } catch (err) {
+        console.error("Profile load error:", err);
+      }
+    }
+
+    fetchProfile();
+  }, []);
+
+  // Generate QR object whenever the sheet opens
+  useEffect(() => {
+    if (!showQR) return;
+
+    const combined = `${name} ${surname} | Grade ${grade} | ${institution}`;
+
+    qrCode.current = new QRCodeStyling({
+      width: 250,
+      height: 250,
+      type: "svg",
+      data: combined,
+      dotsOptions: {
+        color: "#000",
+        type: "rounded",
+      },
+      backgroundOptions: {
+        color: "#fff",
+      },
+    });
+
+    if (qrRef.current) {
+      qrRef.current.innerHTML = "";
+      qrCode.current.append(qrRef.current);
+    }
+  }, [showQR, name, surname, grade, institution]);
+
+  const handleDownload = () => {
+    if (qrCode.current) {
+      qrCode.current.download({ name: "student_qr", extension: "png" });
+    }
+  };
+
   return (
     <div>
       <div className={"flex justify-center items-center ml-5"}>
         <Card
           className={
-            "relative  w-72 h-96  place-content-center mt-20 bg-transparent shadow-2xl sm:w-72   md:w-96 md:h-96    xl:w-54 "
+            "relative w-72 h-96 place-content-center mt-20 bg-transparent shadow-2xl sm:w-72 md:w-96 md:h-96 xl:w-54"
           }
         >
           <CardHeader>
             <CardTitle
-              className={"font-bold text-2xl relative flex justify-center "}
+              className={"font-bold text-2xl relative flex justify-center"}
             >
               Inputs
             </CardTitle>
@@ -34,6 +104,7 @@ export default function Generator() {
               Please Provide Inputs
             </CardDescription>
           </CardHeader>
+
           <CardContent className={"space-y-4"}>
             <Input
               className={"mt-2"}
@@ -57,17 +128,33 @@ export default function Generator() {
               onChange={(evt) => setGrade(evt.target.value)}
             />
 
+            <Input
+              type="text"
+              placeholder="Institution"
+              value={institution}
+              onChange={(evt) => setInstitution(evt.target.value)}
+              list="institution-options"
+            />
+
+            {/* Hard-coded institutions you requested */}
+            <datalist id="institution-options">
+              <option value="Mhetsa Academy" />
+              <option value="Nyukani" />
+              <option value="Muhluri Combined" />
+              <option value="Tlaruhani" />
+            </datalist>
+
             <Button
-              className="flex justify-centre  text-white px-4 py-2 rounded mt-2"
+              className="flex justify-centre text-white px-4 py-2 rounded mt-2"
               onClick={() => {
                 setShowQR(true);
-                SaveToDB();
               }}
             >
               Generate
             </Button>
           </CardContent>
         </Card>
+
         <div>
           <AnimatePresence>
             {showQR && (
@@ -76,9 +163,9 @@ export default function Generator() {
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-6 rounded-t-lg z-50 h-2/3 "
+                className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-6 rounded-t-lg z-50 h-2/3"
               >
-                <div className="flex justify-between items-center mb-4 ">
+                <div className="flex justify-between items-center mb-4">
                   <button
                     className="text-gray-500 hover:text-gray-800"
                     onClick={() => {
@@ -91,8 +178,8 @@ export default function Generator() {
 
                 <div
                   ref={qrRef}
-                  onClick={() => handleDownload()}
-                  className="flex justify-center "
+                  onClick={handleDownload}
+                  className="flex justify-center"
                 />
               </motion.div>
             )}
@@ -102,3 +189,4 @@ export default function Generator() {
     </div>
   );
 }
+

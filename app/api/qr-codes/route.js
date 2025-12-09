@@ -1,32 +1,34 @@
-import { db } from "@/src/db";
+import { db } from "@/src/db/db";
 import { qrCodes } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
-
-export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-
-  const userId = searchParams.get("user_id");
-
-  const rows = await db
-    .select()
-    .from(qrCodes)
-    .where(eq(qrCodes.userId, Number(userId)));
-
-  return Response.json(rows);
-}
 
 export async function POST(req) {
-  const body = await req.json();
-  const { content, user_id, institution_id } = body;
+  try {
+    const body = await req.json();
+    const { userName, userSurname, institution, content } = body;
 
-  const result = await db
-    .insert(qrCodes)
-    .values({
-      content,
-      userId: user_id,
-      institutionId: institution_id,
-    })
-    .returning();
+    const result = await db
+      .insert(qrCodes)
+      .values({
+        userName,
+        userSurname,
+        institution,
+        content,
+      })
+      .returning();
 
-  return Response.json(result[0]);
+    return Response.json(result[0], { status: 201 });
+  } catch (err) {
+    console.error("❌ QR POST error:", err);
+    return Response.json({ error: err.message }, { status: 500 });
+  }
+}
+
+export async function GET() {
+  try {
+    const result = await db.select().from(qrCodes);
+    return Response.json(result);
+  } catch (err) {
+    console.error("❌ QR GET error:", err);
+    return Response.json({ error: err.message }, { status: 500 });
+  }
 }
