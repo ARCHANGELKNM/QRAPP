@@ -1,29 +1,52 @@
-// app/api/profile/route.js
+import { db } from "@src/db";
+import { staffProfiles } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { db } from "@/lib/db"; // your drizzle connection
-import { users } from "@/lib/schema"; // your user table
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     const { getUser } = getKindeServerSession();
     const authUser = await getUser();
 
-    if (!authUser || !authUser.email) {
-      return Response.json({ error: "Not authenticated" }, { status: 401 });
+    if (!authUser) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const userRecord = await db
+    const profile = await db
       .select()
-      .from(users)
-      .where(users.Email.eq(authUser.email))
+      .from(staffProfiles)
+      .where(eq(staffProfiles.kindeUserId, authUser.id))
       .limit(1);
 
-    if (!userRecord.length) {
-      return Response.json({ error: "User not found in DB" }, { status: 404 });
+    return NextResponse.json(profile[0] || {});
+  } catch (err) {
+    console.error("Error fetching profile:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req) {
+  try {
+    const { getUser } = getKindeServerSession();
+    const authUser = await getUser();
+
+    if (!authUser) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    return Response.json(userRecord[0], { status: 200 });
+    const body = await req.json();
+
+    // Update user's profile by kindeUserId
+    const updated = await db
+      .update(staffProfiles)
+      .set(body)
+      .where(eq(staffProfiles.kindeUserId, authUser.id))
+      .returning();
+
+    return NextResponse.json(updated[0] || { success: true });
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    console.error("Error updating profile:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

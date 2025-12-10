@@ -1,123 +1,134 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 
-import { LucideQrCode, ScanIcon, Settings} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArchiveX, Command, File, Inbox, Send, Trash2 } from "lucide-react"
+
+import { NavUser } from "@/components/Navigation Bar/NavUserProfile"
+
 import {
   Sidebar,
-  SidebarFooter,
   SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarHeader,
+  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
-} from "@components/ui/sidebar";
-import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import {
-  LoginLink,
-  RegisterLink,
-} from "@kinde-oss/kinde-auth-nextjs/components";
-import { Button } from "@components/ui/button";
-import { Separator } from "@components/ui/separator";
+  useSidebar,
+} from "@/components/ui/sidebar"
 
-const menuItems = [
-  {
-    id: 1,
-    name: "Scanner",
-    path: "/Generator/Scanner",
-    icon: ScanIcon,
+
+// This is sample data
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
+  navMain: [
+    {
+      title: "Generator",
+      url: "/Pages/Generator",
+      icon: Inbox,
+      isActive: true,
+    },
+    {
+      title: "Scanner",
+      url: "/Pages/Scanner",
+      icon: File,
+      isActive: true,
+    },
+    {
+      title: "Settings",
+      url: "/Pages/Settings/Profile",
+      icon: Send,
+      isActive: true,
+    },
 
-  {
-    id: 2,
-    name: "Generator",
-    path: "/Generator",
-    icon: LucideQrCode,
-  },
+  ],
+}
 
-  {
-    id: 3,
-    name: "Account",
-    icon: Settings,
-    path: "/Generator/Settings/Account",
-  },
-];
+export function AppSidebar() {
+  // Note: I'm using state to show active item.
+  // IRL you should use the url/router.
+  const [activeItem, setActiveItem] = React.useState(data.navMain[0])
+  const { setOpen } = useSidebar()
+  const router = useRouter();
 
-export function AppSidebar(index) {
-  const { isAuthenticated } = useKindeBrowserClient();
-  const { user } = useKindeBrowserClient();
-  const initials =
-    (user?.given_name?.charAt(0) || "") + (user?.family_name?.charAt(0) || "");
   return (
-    <Sidebar>
-      <SidebarHeader className={"flex justify-center font-bold"}>
-        QrApp
-        {/* <SearchForm /> */}
-      </SidebarHeader>
-
-      <Separator className={"  "} />
-
-      <SidebarContent key={index}>
-        {menuItems.map((item) => (
+    <Sidebar
+      collapsible="icon"
+      className="overflow-hidden *:data-[sidebar=sidebar]:flex-row"
+    >
+      {/* This is the first sidebar */}
+      {/* We disable collapsible and adjust width to icon. */}
+      {/* This will make the sidebar appear as icons. */}
+      <Sidebar
+        collapsible="none"
+        className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r"
+      >
+        <SidebarHeader>
           <SidebarMenu>
-            <SidebarMenuItem key={item.id}>
-              <SidebarMenuButton className={"flex"}>
-                <Link href={item.path}> {item.name}</Link>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
+                <a href="#">
+                  <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                    <Command className="size-4" />
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">Acme Inc</span>
+                    <span className="truncate text-xs">Enterprise</span>
+                  </div>
+                </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
-        ))}
-
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent className="px-1.5 md:px-0">
+              <SidebarMenu>
+                {data.navMain.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      tooltip={{
+                        children: item.title,
+                        hidden: false,
+                      }}
+                      onClick={() => {
+                        setActiveItem(item)
+                        const mail = data.mails.sort(() => Math.random() - 0.5)
+                        setMails(
+                          mail.slice(
+                            0,
+                            Math.max(5, Math.floor(Math.random() * 10) + 1)
+                          )
+                        )
+                        setOpen(true)
+                        router.push(item.url);
+                      }
+                    
+                    }
+                      isActive={activeItem?.title === item.title}
+                      className="px-2.5 md:px-2"
+                    >
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
         <SidebarFooter>
-          {!isAuthenticated ? (
-            <div className="flex-col justify-center ">
-              <div>
-                <LoginLink>
-                  <Button className={"  absolute  bottom-2 h-6 ml-5"}>
-                    Log In
-                  </Button>
-                </LoginLink>
-
-                <RegisterLink>
-                  <Button className={"  absolute  right-4 bottom-2 mr-5 h-6"}>
-                    Sign Up
-                  </Button>
-                </RegisterLink>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <div
-                className={
-                  " flex place-items-center h-12 w-40 absolute bottom-0 mb-3 hover:rounded-sm  hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]"
-                }
-              >
-                <Avatar className={"  w-9 h-9 mr-2"}>
-                  <AvatarImage>
-                    <Image
-                      alt={""}
-                      src={user?.profile}
-                      height={50}
-                      width={50}
-                    />
-                  </AvatarImage>
-
-                  <AvatarFallback> {initials} </AvatarFallback>
-                </Avatar>
-
-                <span className={" text-xs text-slate-500 "}>
-                  {user?.given_name} {user?.family_name}
-                </span>
-              </div>
-            </div>
-          )}
+          <NavUser user={data.user} />
         </SidebarFooter>
-      </SidebarContent>
-
-      <SidebarRail />
-    </Sidebar>
-  );
+      </Sidebar>
+      </Sidebar>
+  )
 }

@@ -1,3 +1,4 @@
+// app/Pages/Generator/GeneratorClient.jsx
 
 "use client";
 
@@ -15,74 +16,101 @@ import {
 import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 
-export default function Generator() {
-  // USER INFO
+export default function GeneratorClient() {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [grade, setGrade] = useState("");
-  const [institution, setInstitution] = useState("");
-
-  // UI / QR
+  const [manualInstitution, setManualInstitution] = useState("");
+  const [autoFetchedInstitution, setAutoFetchedInstitution] = useState(null);
   const [showQR, setShowQR] = useState(false);
+  const [isLogging, setIsLogging] = useState(false);
+
   const qrRef = useRef(null);
-  const qrCode = useRef(null);
+  // Ref to hold the dynamically created QR Code instance
+  const qrCodeRef = useRef(null);
 
-  // Load user profile from DB through API
+  // --- New Function: Save QR Code History to Backend ---
+  const saveQrCodeHistory = async (contentString) => {
+    setIsLogging(true);
+    try {
+      const response = await fetch("/api/qr-codes", {
+        // Using your correct route
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: contentString }),
+      });
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
+      console.log("QR Code generation logged successfully.");
+    } catch (error) {
+      console.error("Error logging QR history:", error.message);
+    } finally {
+      setIsLogging(false);
+    }
+  };
+
+  // --- LOGIC 1: Attempt to fetch the user's institution on load (FAILSAFE) ---
   useEffect(() => {
-    async function fetchProfile() {
+    async function loadInstitution() {
       try {
-        const res = await fetch("/api/profile");
-
-        if (!res.ok) {
-          console.error("Profile fetch failed");
-          return;
+        const res = await fetch("/api/users"); // Using your correct route
+        if (res.ok) {
+          const data = await res.json();
+          setAutoFetchedInstitution(data.institution || null);
         }
-
-        const data = await res.json();
-
-        // Prefill fields
-        setName(data.Name || "");
-        setSurname(data.Surname || "");
-        setGrade(data.Grade || "");
-        setInstitution(data.Institution || "");
-      } catch (err) {
-        console.error("Profile load error:", err);
+      } catch (error) {
+        console.error("Network error fetching profile:", error);
       }
     }
-
-    fetchProfile();
+    loadInstitution();
   }, []);
 
-  // Generate QR object whenever the sheet opens
+  // --- LOGIC 2: Generate QR object whenever the sheet opens (YOUR METHOD) ---
   useEffect(() => {
-    if (!showQR) return;
+    if (!showQR) return; // Only run when modal opens
 
-    const combined = `${name} ${surname} | Grade ${grade} | ${institution}`;
+    const institutionToUse =
+      autoFetchedInstitution || manualInstitution || "N/A";
 
-    qrCode.current = new QRCodeStyling({
+    const combined = `${name || "N/A"} ${surname || "N/A"} | Grade ${
+      grade || "N/A"
+    } | ${institutionToUse}`;
+
+    // Call the logging function here in the useEffect where the data is finalized
+    saveQrCodeHistory(combined);
+
+    // Initialize the instance inside the effect using YOUR method
+    qrCodeRef.current = new QRCodeStyling({
       width: 250,
       height: 250,
       type: "svg",
       data: combined,
-      dotsOptions: {
-        color: "#000",
-        type: "rounded",
-      },
-      backgroundOptions: {
-        color: "#fff",
-      },
+      dotsOptions: { color: "#000", type: "rounded" },
+      backgroundOptions: { color: "#fff" },
+      // logo assumed from prior context
+      // image: "/qra_logo.png"
     });
 
-    if (qrRef.current) {
-      qrRef.current.innerHTML = "";
-      qrCode.current.append(qrRef.current);
+    if (qrRef.current && qrCodeRef.current) {
+      qrRef.current.innerHTML = ""; // Clear previous QR codes
+      qrCodeRef.current.append(qrRef.current); // Append new instance
     }
-  }, [showQR, name, surname, grade, institution]);
+  }, [showQR, name, surname, grade, autoFetchedInstitution, manualInstitution]);
 
+  // --- LOGIC 3: Download Handler ---
   const handleDownload = () => {
-    if (qrCode.current) {
-      qrCode.current.download({ name: "student_qr", extension: "png" });
+    if (qrCodeRef.current) {
+      qrCodeRef.current.download({
+        name: `${surname}_${name}_QR`,
+        extension: "png",
+      });
     }
+  };
+
+  // --- LOGIC 4: Handle Generation/Show Button Click ---
+  const handleGenerateClick = () => {
+    setShowQR(true);
   };
 
   return (
@@ -99,62 +127,45 @@ export default function Generator() {
             >
               Inputs
             </CardTitle>
-
             <CardDescription className={"flex justify-center"}>
               Please Provide Inputs
             </CardDescription>
           </CardHeader>
-
           <CardContent className={"space-y-4"}>
             <Input
-              className={"mt-2"}
               type="text"
               placeholder="Name"
               value={name}
               onChange={(evt) => setName(evt.target.value)}
             />
-
             <Input
               type="text"
               placeholder="Surname"
               value={surname}
               onChange={(evt) => setSurname(evt.target.value)}
             />
-
             <Input
               type="text"
               placeholder="Grade"
               value={grade}
               onChange={(evt) => setGrade(evt.target.value)}
             />
-
             <Input
               type="text"
-              placeholder="Institution"
-              value={institution}
-              onChange={(evt) => setInstitution(evt.target.value)}
-              list="institution-options"
+              placeholder="Institution (Auto-filled if set in settings)"
+              value={autoFetchedInstitution || manualInstitution}
+              onChange={(evt) => setManualInstitution(evt.target.value)}
+              disabled={!!autoFetchedInstitution}
             />
-
-            {/* Hard-coded institutions you requested */}
-            <datalist id="institution-options">
-              <option value="Mhetsa Academy" />
-              <option value="Nyukani" />
-              <option value="Muhluri Combined" />
-              <option value="Tlaruhani" />
-            </datalist>
-
             <Button
               className="flex justify-centre text-white px-4 py-2 rounded mt-2"
-              onClick={() => {
-                setShowQR(true);
-              }}
+              onClick={handleGenerateClick}
+              disabled={isLogging}
             >
-              Generate
+              {isLogging ? "Logging..." : "Generate"}
             </Button>
           </CardContent>
         </Card>
-
         <div>
           <AnimatePresence>
             {showQR && (
@@ -163,9 +174,9 @@ export default function Generator() {
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-6 rounded-t-lg z-50 h-2/3"
+                className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-6 rounded-t-lg z-50 h-2/3 "
               >
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-4 ">
                   <button
                     className="text-gray-500 hover:text-gray-800"
                     onClick={() => {
@@ -175,11 +186,10 @@ export default function Generator() {
                     <X />
                   </button>
                 </div>
-
                 <div
                   ref={qrRef}
-                  onClick={handleDownload}
-                  className="flex justify-center"
+                  onClick={() => handleDownload()}
+                  className="flex justify-center cursor-pointer"
                 />
               </motion.div>
             )}
@@ -189,4 +199,3 @@ export default function Generator() {
     </div>
   );
 }
-
