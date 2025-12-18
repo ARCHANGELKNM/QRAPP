@@ -1,5 +1,5 @@
-import AdminDashboard from "@components/AdminDashboard/AdminDashboard";
+import SubadminDashboard from "@components/SubAdmin Dashboard/SubAdmin Dashboard";
 
 export default function AdminDashboardPage() {
-  return <AdminDashboard />;
+  return <SubadminDashboard />;
 }

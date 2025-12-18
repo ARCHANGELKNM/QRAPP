@@ -1,52 +1,31 @@
-import { db } from "@src/db";
+// app/api/profile/route.js
+import { db } from "@/lib/db";
 import { staffProfiles } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  try {
-    const { getUser } = getKindeServerSession();
-    const authUser = await getUser();
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
-    if (!authUser) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
-
-    const profile = await db
-      .select()
-      .from(staffProfiles)
-      .where(eq(staffProfiles.kindeUserId, authUser.id))
-      .limit(1);
-
-    return NextResponse.json(profile[0] || {});
-  } catch (err) {
-    console.error("Error fetching profile:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-}
 
-export async function PATCH(req) {
-  try {
-    const { getUser } = getKindeServerSession();
-    const authUser = await getUser();
+  const [profile] = await db
+    .select()
+    .from(staffProfiles)
+    .where(eq(staffProfiles.kindeUserId, user.id))
+    .limit(1);
 
-    if (!authUser) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
-
-    const body = await req.json();
-
-    // Update user's profile by kindeUserId
-    const updated = await db
-      .update(staffProfiles)
-      .set(body)
-      .where(eq(staffProfiles.kindeUserId, authUser.id))
-      .returning();
-
-    return NextResponse.json(updated[0] || { success: true });
-  } catch (err) {
-    console.error("Error updating profile:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  if (!profile) {
+    return NextResponse.json({
+      status: "unregistered",
+      kindeUserId: user.id,
+      email: user.email,
+    });
   }
+
+  return NextResponse.json(profile);
 }

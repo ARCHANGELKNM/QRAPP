@@ -1,34 +1,38 @@
-import { db } from "@/src/db/db";
-import { qrCodes } from "@/src/db/schema";
+// app/api/qr-codes/route.js
+import { db } from "@/lib/db";
+import { qrCodes, staffProfiles } from "@/lib/schema";
+import { eq } from "drizzle-orm";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  try {
-    const body = await req.json();
-    const { userName, userSurname, institution, content } = body;
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
-    const result = await db
-      .insert(qrCodes)
-      .values({
-        userName,
-        userSurname,
-        institution,
-        content,
-      })
-      .returning();
-
-    return Response.json(result[0], { status: 201 });
-  } catch (err) {
-    console.error("❌ QR POST error:", err);
-    return Response.json({ error: err.message }, { status: 500 });
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-}
 
-export async function GET() {
-  try {
-    const result = await db.select().from(qrCodes);
-    return Response.json(result);
-  } catch (err) {
-    console.error("❌ QR GET error:", err);
-    return Response.json({ error: err.message }, { status: 500 });
+  const [profile] = await db
+    .select()
+    .from(staffProfiles)
+    .where(eq(staffProfiles.kindeUserId, user.id))
+    .limit(1);
+
+  if (!profile || !profile.institutionId) {
+    return NextResponse.json({ error: "User not approved" }, { status: 403 });
   }
+
+  const { content } = await req.json();
+
+  const inserted = await db
+    .insert(qrCodes)
+    .values({
+      content,
+      userId: user.id,
+      institutionId: profile.institutionId,
+    })
+    .returning();
+
+  return NextResponse.json(inserted[0]);
 }

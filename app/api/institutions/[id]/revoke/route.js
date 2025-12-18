@@ -1,7 +1,7 @@
-// app/api/institutions/[id]/approve/route.js
+// app/api/institutions/[id]/revoke/route.js
 import { db } from "@/lib/db";
 import { staffProfiles } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { NextResponse } from "next/server";
 
@@ -14,6 +14,7 @@ export async function POST(req, { params }) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
+  // Fetch caller
   const [caller] = await db
     .select()
     .from(staffProfiles)
@@ -28,37 +29,34 @@ export async function POST(req, { params }) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { target_kinde_user_id, name, email } = await req.json();
+  const { target_kinde_user_id } = await req.json();
 
   if (!target_kinde_user_id) {
     return NextResponse.json({ error: "Missing target user" }, { status: 400 });
   }
 
+  // 🔐 SAFE revoke: institution + role locked
   const updated = await db
     .update(staffProfiles)
-.set({
-  role: "teacher",
-  institutionId,
-  requestedInstitutionId: null
-})
-
-    .where(eq(staffProfiles.kindeUserId, target_kinde_user_id))
+    .set({
+      institutionId: null,
+      role: null,
+    })
+    .where(
+      and(
+        eq(staffProfiles.kindeUserId, target_kinde_user_id),
+        eq(staffProfiles.institutionId, institutionId),
+        eq(staffProfiles.role, "teacher")
+      )
+    )
     .returning();
 
-  if (updated.length > 0) {
-    return NextResponse.json({ success: true, user: updated[0] });
+  if (updated.length === 0) {
+    return NextResponse.json(
+      { error: "User not revokable or not found" },
+      { status: 400 }
+    );
   }
 
-  const inserted = await db
-    .insert(staffProfiles)
-    .values({
-      kindeUserId: target_kinde_user_id,
-      role: "teacher",
-      institutionId,
-      name,
-      email,
-    })
-    .returning();
-
-  return NextResponse.json({ success: true, user: inserted[0] });
+  return NextResponse.json({ success: true });
 }

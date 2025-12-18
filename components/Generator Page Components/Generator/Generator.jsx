@@ -4,6 +4,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
 import QRCodeStyling from "qr-code-styling";
 import { X } from "lucide-react";
 import {
@@ -17,6 +18,9 @@ import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 
 export default function GeneratorClient() {
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [grade, setGrade] = useState("");
@@ -112,6 +116,64 @@ export default function GeneratorClient() {
   const handleGenerateClick = () => {
     setShowQR(true);
   };
+
+// Connects to Profile API 
+
+   useEffect(() => {
+    async function loadProfile() {
+      const res = await fetch("/api/profile");
+
+      if (!res.ok) {
+        setError("Not authenticated");
+        setLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+      setProfile(data);
+      setLoading(false);
+    }
+
+    loadProfile();
+  }, []);
+
+  async function generateQR(content) {
+    const res = await fetch("/api/qr-codes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content })
+    });
+
+    if (!res.ok) {
+      alert("You are not approved to generate QR codes");
+      return;
+    }
+
+    const qr = await res.json();
+    console.log("QR created:", qr);
+  }
+
+  if (loading) return <p>Loading…</p>;
+
+  if (!profile) {
+    return 
+    <div className={" flex justify-center"}> 
+           <LoginLink> Login </LoginLink>
+           <RegisterLink> Sign up </RegisterLink>
+    </div>
+
+  }
+
+  if (!profile.institutionId) {
+    return (
+      <div>
+        <h2>Awaiting approval</h2>
+        <p>
+          A sub-admin must approve your access before you can generate QR codes.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>

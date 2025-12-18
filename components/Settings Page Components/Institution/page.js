@@ -1,15 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectTrigger,
@@ -17,136 +8,138 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
-export default function InstitutionSelector() {
-  const [institution, setInstitution] = useState("");
+export default function InstitutionSettings() {
   const [institutions, setInstitutions] = useState([]);
+  const [institutionId, setInstitutionId] = useState("");
+  const [profile, setProfile] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [loadingInstitutions, setLoadingInstitutions] = useState(true);
   const [message, setMessage] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
 
-  // Load institutions list and user profile on mount
   useEffect(() => {
-    async function loadData() {
-      try {
-        // Fetch live institutions list
-        setLoadingInstitutions(true);
-        const instRes = await fetch("/api/institutions");
-        if (instRes.ok) {
-          const instData = await instRes.json();
-          setInstitutions(instData);
-        } else {
-          setMessage("Failed to load institutions list");
-        }
-      } catch (err) {
-        console.error("Error loading institutions:", err);
-        setMessage("Error loading institutions");
-      } finally {
-        setLoadingInstitutions(false);
+    async function load() {
+      // Load institutions
+      const instRes = await fetch("/api/institutions");
+      if (instRes.ok) {
+        setInstitutions(await instRes.json());
       }
+      setLoadingInstitutions(false);
 
-      try {
-        // Fetch current user profile
-        const profileRes = await fetch("/api/profile");
-        if (profileRes.ok) {
-          const profileData = await profileRes.json();
-          setInstitution(profileData.institution || "");
-          setIsAdmin(profileData.role === "admin");
-        }
-      } catch (err) {
-        console.error("Error loading profile:", err);
+      // Load profile
+      const profileRes = await fetch("/api/profile");
+      if (profileRes.ok) {
+        setProfile(await profileRes.json());
       }
     }
 
-    loadData();
+    load();
   }, []);
 
-  async function saveInstitution() {
+  async function requestAccess() {
+    if (!institutionId) return;
+
     setLoading(true);
     setMessage("");
 
-    try {
-      const res = await fetch("/api/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ institution }),
-      });
+    const res = await fetch("/api/institutions/request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        institutionId,
+        name: profile?.name ?? "",
+        surname: profile?.surname ?? "",
+      }),
+    });
 
-      if (!res.ok) {
-        setMessage("Failed to save settings. Are you logged in?");
-        setLoading(false);
-        return;
-      }
-
-      setMessage("Institution saved successfully!");
-    } catch (err) {
-      console.error("Error saving institution:", err);
-      setMessage("Error saving institution");
-    } finally {
+    if (!res.ok) {
+      setMessage("Failed to request access");
       setLoading(false);
+      return;
     }
+
+    setMessage("Access request sent. Awaiting approval.");
+    setProfile({ ...profile, role: "pending" });
+    setLoading(false);
+  }
+
+  if (!profile) {
+    return <p className="p-6 text-sm text-muted-foreground">Loading…</p>;
   }
 
   return (
-    <div className="flex justify-center mt-10">
-      <Card className="w-80">
-        <CardHeader>
-          <CardTitle>Select Your Institution</CardTitle>
-        </CardHeader>
+    <div className="max-w-3xl mx-auto p-6 space-y-8">
+      {/* PAGE TITLE */}
+      <div>
+        <h1 className="text-2xl font-semibold">Settings</h1>
+        <p className="text-sm text-muted-foreground">
+          Manage your account and institution access
+        </p>
+      </div>
 
-        <CardContent className="space-y-4">
-          {loadingInstitutions ? (
-            <p className="text-sm text-gray-500">Loading institutions...</p>
-          ) : (
-            <Select value={institution} onValueChange={setInstitution}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select institution" />
-              </SelectTrigger>
+      {/* INSTITUTION SECTION */}
+      <div className="border rounded-lg p-6 space-y-4">
+        <div>
+          <h2 className="text-lg font-medium">Institution</h2>
+          <p className="text-sm text-muted-foreground">
+            Select the institution you belong to
+          </p>
+        </div>
 
-              <SelectContent>
-                {institutions.map((inst) => (
-                  <SelectItem
-                    key={inst.id || inst.name}
-                    value={inst.name || inst}
-                  >
-                    {inst.name || inst}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        {/* UNREGISTERED */}
+        {profile.status === "unregistered" && (
+          <>
+            {loadingInstitutions ? (
+              <p className="text-sm text-muted-foreground">
+                Loading institutions…
+              </p>
+            ) : (
+              <Select onValueChange={setInstitutionId}>
+                <SelectTrigger className="max-w-md">
+                  <SelectValue placeholder="Select institution" />
+                </SelectTrigger>
+                <SelectContent>
+                  {institutions.map((inst) => (
+                    <SelectItem key={inst.id} value={inst.id}>
+                      {inst.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
+            <Button
+              className="mt-2"
+              disabled={loading || !institutionId}
+              onClick={requestAccess}
+            >
+              {loading ? "Requesting…" : "Request access"}
+            </Button>
+          </>
+        )}
+
+        {/* PENDING */}
+        {profile.role === "pending" && (
+          <p className="text-sm text-yellow-600">
+            Your request is pending approval by a sub-admin.
+          </p>
+        )}
+
+        {/* APPROVED */}
+        {profile.role !== "pending" &&
+          profile.role !== "unregistered" && (
+            <p className="text-sm text-green-600">
+              You are registered under your institution.
+            </p>
           )}
 
-          <Button
-            className="w-full"
-            onClick={saveInstitution}
-            disabled={loading || !institution || loadingInstitutions}
-          >
-            {loading ? "Saving..." : "Save Institution"}
-          </Button>
-        </CardContent>
         {message && (
-          <CardFooter>
-            <p
-              className={`text-sm ${
-                message.includes("Error") || message.includes("Failed")
-                  ? "text-red-500"
-                  : "text-green-500"
-              }`}
-            >
-              {message}
-            </p>
-          </CardFooter>
+          <p className="text-sm text-muted-foreground">{message}</p>
         )}
-      </Card>
-
-      {isAdmin && (
-        <div className="mt-6">
-          <Link href="/Pages/Settings/AdminDashboard">
-            <Button variant="outline">Admin Panel - Manage Institutions</Button>
-          </Link>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
+
