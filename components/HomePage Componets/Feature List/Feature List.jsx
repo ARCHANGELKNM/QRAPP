@@ -1,3 +1,5 @@
+// Feature List Section
+
 "use client";
 
 import { useRef, useEffect, useState } from "react";
@@ -49,37 +51,42 @@ export default function Features() {
   }, []);
 
   return (
-    <div className="overflow-hidden py-12 bg-gray-100 dark:bg-gray-800">
+    <section className="py-12 sm:py-16 bg-gray-100 dark:bg-gray-900 overflow-hidden">
       <motion.div
         ref={containerRef}
-        className="flex space-x-6"
-        animate={{ x: ["100%", "-100%"] }}
-        transition={{ repeat: Infinity, duration: 30, ease: "linear" }}
+        className="flex space-x-4 sm:space-x-6 px-4 sm:px-6"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
       >
-        {features.concat(features).map((feature, index) => {
-          const isActive = index === activeIndex;
-          return (
-            <motion.div
-              key={index}
-              data-index={index}
-              className={`feature-card min-w-[250px] h-40 bg-white dark:bg-gray-900 rounded-2xl shadow-lg flex flex-col justify-center items-center p-6 transition-all duration-300 ${
-                isActive ? "ring-4 ring-primary scale-110" : ""
-              }`}
-            >
-              <span className="text-4xl mb-2">{feature.icon}</span>
-              <h3
-                className={`text-lg text-center transition-all duration-300 ${
-                  isActive
-                    ? "font-extrabold text-gray-900 dark:text-white"
-                    : "font-medium text-gray-600 dark:text-gray-400"
-                }`}
-              >
-                {feature.title}
-              </h3>
-            </motion.div>
-          );
-        })}
+        {[...features, ...features].map((feature, index) => (
+          <div
+            key={index}
+            data-index={index}
+            className={`
+          feature-card
+          min-w-[180px] sm:min-w-[240px]
+          h-36 sm:h-40
+          rounded-2xl
+          bg-white dark:bg-gray-800
+          shadow-md sm:shadow-lg
+          flex flex-col items-center justify-center
+          transition-all duration-300
+          ${
+            activeIndex === index
+              ? "sm:scale-110 sm:ring-4 sm:ring-primary "
+              : ""
+          }
+        `}
+          >
+            <span className="text-3xl sm:text-4xl mb-2 ">
+              {feature.icon}
+            </span>
+            <h3 className="text-sm sm:text-base font-semibold text-center px-2">
+              {feature.title}
+            </h3>
+          </div>
+        ))}
       </motion.div>
-    </div>
+    </section>
   );
 }

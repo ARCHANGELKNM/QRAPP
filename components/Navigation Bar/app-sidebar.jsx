@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
 import { useRouter } from "next/navigation";
-import { ArchiveX, Command, File, Inbox, Send, Trash2 } from "lucide-react"
+import { Command, Bolt, ScanLine, QrCode, Gauge } from "lucide-react";
 
-import { NavUser } from "@/components/Navigation Bar/NavUserProfile"
+import { NavUser } from "@/components/Navigation Bar/NavUserProfile";
 
 import {
   Sidebar,
@@ -19,44 +19,44 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-
+} from "@/components/ui/sidebar";
 
 // This is sample data
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Generator",
       url: "/Pages/Generator",
-      icon: Inbox,
+      icon: QrCode,
       isActive: true,
     },
     {
       title: "Scanner",
       url: "/Pages/Scanner",
-      icon: File,
+      icon: ScanLine,
       isActive: true,
     },
     {
       title: "Settings",
-      url: "/Pages/Settings/Profile",
-      icon: Send,
+      url: "/Pages/Settings",
+      icon: Bolt,
       isActive: true,
     },
 
+    {
+      title: "Dashboard",
+      url: "/Pages/Subadmin/Dashboard",
+      icon: Gauge,
+      isActive: true,
+    },
   ],
-}
+};
 
 export function AppSidebar() {
   // Note: I'm using state to show active item.
   // IRL you should use the url/router.
-  const [activeItem, setActiveItem] = React.useState(data.navMain[0])
-  const { setOpen } = useSidebar()
+  const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
+  const { setOpen } = useSidebar();
   const router = useRouter();
 
   return (
@@ -100,19 +100,10 @@ export function AppSidebar() {
                         hidden: false,
                       }}
                       onClick={() => {
-                        setActiveItem(item)
-                        const mail = data.mails.sort(() => Math.random() - 0.5)
-                        setMails(
-                          mail.slice(
-                            0,
-                            Math.max(5, Math.floor(Math.random() * 10) + 1)
-                          )
-                        )
-                        setOpen(true)
+                        setActiveItem(item);
+                        setOpen(true);
                         router.push(item.url);
-                      }
-                    
-                    }
+                      }}
                       isActive={activeItem?.title === item.title}
                       className="px-2.5 md:px-2"
                     >
@@ -126,9 +117,9 @@ export function AppSidebar() {
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser />
         </SidebarFooter>
       </Sidebar>
-      </Sidebar>
-  )
+    </Sidebar>
+  );
 }

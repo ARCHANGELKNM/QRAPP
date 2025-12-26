@@ -1,51 +1,51 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@components/ui/button"; // Shadcn Button
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export default function CTA() {
-  const route = useRouter();
+export default function CallToAction() {
   return (
-    <section className="relative flex flex-col items-center justify-center text-center py-20 bg-gray-100 dark:bg-gray-900 overflow-hidden">
-      {/* Animated light background */}
-      <motion.div
-        className="absolute top-0 left-1/2 w-[600px] h-[600px] -translate-x-1/2  rounded-full blur-3xl opacity-50 animate-pulse"
-        initial={{ scale: 0.8 }}
-        animate={{ scale: 1.2 }}
-        transition={{
-          repeat: Infinity,
-          repeatType: "mirror",
-          duration: 6,
-          ease: "easeInOut",
-        }}
-      />
+    <>
+      {/* TRANSITION STRIP */}
+      <div className="relative h-24 bg-gradient-to-b from-gray-100 to-transparent dark:from-gray-800" />
 
-      <div className="relative z-10 space-y-6">
-        <h2 className="text-4xl font-bold text-gray-900 dark:text-white">
-          Ready to Generate or Scan your QR-Code?
-        </h2>
-        <p className="text-gray-600 dark:text-gray-300 text-lg">
-          It's fast, simple, and totally free.
-        </p>
+      {/* CTA SECTION */}
+      <section className="relative py-20 sm:py-28 bg-gradient-to-br from-primary via-indigo-600 to-purple-700 text-white overflow-hidden">
+        {/* Soft overlay to reduce harshness */}
+        <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
 
-        <div className="flex gap-4 justify-center">
-          <Button
-            onClick={() => route.push("/Generator")}
-            className="px-8 py-4 text-lg font-semibold animate-background-move bg-gradient-to-r from-primary to-secondary bg-size-200 bg-pos-0 hover:bg-pos-100 transition-all duration-700"
-          >
-            Get Started
-          </Button>
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative max-w-4xl mx-auto px-4 text-center"
+        >
+          <h2 className="text-3xl sm:text-5xl font-extrabold mb-6 leading-tight">
+            Ready to Generate QR Codes
+            <br className="hidden sm:block" /> in Seconds?
+          </h2>
 
-          <Button
-            onClick={() => route.push("/Generator/Scanner")}
-            variant="outline"
-            className="px-8 py-4 text-lg font-semibold border-primary dark:border-primary hover:bg-primary/10 transition-all duration-300"
-          >
-            Scan a Qr-Code
-          </Button>
-        </div>
-      </div>
-    </section>
+          <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto mb-10">
+            Fast, secure, and institution-ready QR codes — built for QRA.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/Pages/Generator"
+              className="px-8 py-4 rounded-xl bg-white text-black font-semibold text-lg hover:scale-105 transition-transform"
+            >
+              Generate a QR Code
+            </Link>
+
+            <Link
+              href="/Pages/Scanner"
+              className="px-8 py-4 rounded-xl border border-white/40 text-white font-medium text-lg hover:bg-white/10 transition"
+            >
+             Scanner
+            </Link>
+          </div>
+        </motion.div>
+      </section>
+    </>
   );
 }

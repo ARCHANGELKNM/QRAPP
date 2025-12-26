@@ -79,6 +79,49 @@
     object-fit: cover;
   }
 
+  .animated-gradient-text {
+  background: linear-gradient(
+    270deg,
+    #4f46e5, /* primary */
+    #6366f1, /* indigo */
+    #9333ea  /* purple */
+  );
+  background-size: 600% 600%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.typing-cursor {
+  width: 2px;
+  height: 1.1em;
+  margin-left: 4px;
+  background: linear-gradient(
+    180deg,
+    #4f46e5,
+    #9333ea
+  );
+  animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+}
+
+
   @layer utilities {
     .bg-size-200 {
       background-size: 200% 200%;
