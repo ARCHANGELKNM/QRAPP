@@ -1,17 +1,23 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { institutions } from "@/lib/schema";
+import { requireAuth } from "@/lib/server/auth/requireAuth";
+import { getStaffProfile } from "@/lib/server/auth/StaffProfile";
 
 export async function GET() {
   try {
-    const data = await db.select().from(institutions);
+    const user = await requireAuth();
 
-    return NextResponse.json(data);
+    const profile = await getStaffProfile(user.id);
+
+    return NextResponse.json({
+      user,
+      profile, // can be null — frontend handles this
+    });
   } catch (err) {
-    console.error("Institutions GET error:", err);
+    console.error("Profile API error:", err);
+
     return NextResponse.json(
-      { error: "Failed to fetch institutions" },
-      { status: 500 }
+      { error: err.message || "Unauthorized" },
+      { status: 401 }
     );
   }
 }

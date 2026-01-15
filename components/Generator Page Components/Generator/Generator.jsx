@@ -15,107 +15,126 @@ import {
 import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 
+import ErrorAdminApproval from "@components/Error handling/Admin Approval/Error";
+import { ErrorCreateAccount } from "@components/Error handling/Create Account/Error";
+import LoadingAnimation from "@components/Loading Animation/Loading";
+
 export default function GeneratorClient() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [canGenerate, setCanGenerate] = useState(false);
 
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [grade, setGrade] = useState("");
 
-  const [manualInstitution, setManualInstitution] = useState("");
   const [autoFetchedInstitution, setAutoFetchedInstitution] = useState(null);
+  const [manualInstitution, setManualInstitution] = useState("");
 
   const [showQR, setShowQR] = useState(false);
 
-  // 🔑 Refs (MUST exist outside conditionals)
   const qrRef = useRef(null);
   const qrCodeRef = useRef(null);
 
   /* -----------------------------
-     LOAD PROFILE (AUTH ONLY)
+     LOAD PROFILE (ONCE)
   ------------------------------*/
   useEffect(() => {
     async function loadProfile() {
-      const res = await fetch("/api/profile");
-      if (!res.ok) {
+      try {
+        const res = await fetch("/api/profile");
+        if (!res.ok) {
+          setProfile(null);
+          return;
+        }
+
+        const data = await res.json();
+        setProfile(data);
+
+        if (data?.approved === true && data?.institutionId) {
+          setCanGenerate(true);
+          setAutoFetchedInstitution(data.institutionName || null);
+        }
+      } catch (err) {
+        console.error("Profile load error:", err);
+      } finally {
         setLoading(false);
-        return;
       }
-      const data = await res.json();
-      setProfile(data);
-      setAutoFetchedInstitution(data?.institutionName || null);
-      setLoading(false);
     }
+
     loadProfile();
   }, []);
 
   /* -----------------------------
-     GENERATE QR AFTER UI OPENS
+     ACCESS STATES
   ------------------------------*/
-  useEffect(() => {
-    if (!showQR) return;
-    if (!qrRef.current) return;
+  if (loading) return <LoadingAnimation />;
 
-    const institution = autoFetchedInstitution ;
+  if (!profile) {
+    return (
+      <ErrorCreateAccount
+        title="You're not logged in"
+        description="Please sign in to generate QR codes."
+        actionLabel="Sign In"
+      />
+    );
+  }
+
+  if (!canGenerate) {
+    return (
+      <ErrorAdminApproval
+        title="Approval Required"
+        description="You need approval before generating QR codes."
+        actionLabel="Request Access"
+      />
+    );
+  }
+
+  /* -----------------------------
+     GENERATE QR
+  ------------------------------*/
+  async function handleGenerateClick() {
+    const institution = autoFetchedInstitution || manualInstitution || "N/A";
 
     const combined = `${name || "N/A"} ${surname || "N/A"} | Grade ${
       grade || "N/A"
     } | ${institution}`;
 
-    // Clear old QR
-    qrRef.current.innerHTML = "";
+    // Render QR immediately
+    setShowQR(true);
 
-    // Create new QR instance
-    qrCodeRef.current = new QRCodeStyling({
-      width: 250,
-      height: 250,
-      type: "svg",
-      data: combined,
-      dotsOptions: {
-        color: "#000",
-        type: "rounded",
-      },
-      backgroundOptions: {
-        color: "#fff",
-      },
-    });
+    if (qrRef.current) {
+      qrRef.current.innerHTML = "";
 
-    // Append to DOM
-    qrCodeRef.current.append(qrRef.current);
+      qrCodeRef.current = new QRCodeStyling({
+        width: 250,
+        height: 250,
+        type: "svg",
+        data: combined,
+        dotsOptions: { type: "rounded" },
+        backgroundOptions: { color: "#fff" },
+      });
 
-    // Log QR generation (NON-BLOCKING)
-    if (profile) {
-      fetch("/api/qr-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: combined,
-          generatedByKindeId: profile.id,
-          generatedByName: `${profile.name || "N/A"} ${profile.surname || ""}`,
-          institutionName: institution,
-        }),
-      }).catch(() => {});
+      qrCodeRef.current.append(qrRef.current);
     }
-  }, [showQR]);
+
+    // Log QR (non-blocking)
+    fetch("/api/qr-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: combined }),
+    }).catch(() => {});
+  }
+
+  function handleDownload() {
+    if (qrCodeRef.current) {
+      qrCodeRef.current.download({ name: "qra-code", extension: "png" });
+    }
+  }
 
   /* -----------------------------
-     HANDLERS
+     RENDER
   ------------------------------*/
-  const handleGenerateClick = () => {
-    setShowQR(true);
-  };
-
-  const handleDownload = () => {
-    if (!qrCodeRef.current) return;
-    qrCodeRef.current.download({
-      name: "qr-code",
-      extension: "png",
-    });
-  };
-
-  if (loading) return <p>Loading…</p>;
-
   return (
     <div className="flex justify-center items-center">
       <Card className="w-96 mt-20 shadow-2xl">
@@ -127,21 +146,9 @@ export default function GeneratorClient() {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <Input
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Input
-            placeholder="Surname"
-            value={surname}
-            onChange={(e) => setSurname(e.target.value)}
-          />
-          <Input
-            placeholder="Grade"
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
-          />
+          <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+          <Input placeholder="Surname" value={surname} onChange={(e) => setSurname(e.target.value)} />
+          <Input placeholder="Grade" value={grade} onChange={(e) => setGrade(e.target.value)} />
 
           <Input
             placeholder="Institution"

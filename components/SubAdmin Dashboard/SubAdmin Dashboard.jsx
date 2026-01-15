@@ -1,104 +1,140 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
-export default function SubadminDashboard() {
-  const [data, setData] = useState(null);
+export default function SubAdminDashboard() {
+  const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  async function loadDashboard() {
-    const res = await fetch("/api/sub-admin/dashboard");
-    const json = await res.json();
-    setData(json);
-  }
-
+  // ─────────────────────────────────────────────
+  // Load dashboard data (NO redirects)
+  // ─────────────────────────────────────────────
   useEffect(() => {
-    loadDashboard().finally(() => setLoading(false));
+    const loadDashboard = async () => {
+      try {
+        const res = await fetch("/api/subadmin/dashboard");
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data?.error || "Failed to load dashboard");
+        }
+
+        const data = await res.json();
+        setPending(data.pending || []);
+      } catch (err) {
+        console.error("Dashboard error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboard();
   }, []);
 
-  async function approveUser(kindeUserId) {
-    await fetch(`/api/institutions/${data.institution.id}/approve`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ target_kinde_user_id: kindeUserId }),
-    });
-    loadDashboard();
+  // ─────────────────────────────────────────────
+  // Approve handler
+  // ─────────────────────────────────────────────
+  const handleApprove = async (staffId) => {
+    try {
+      const res = await fetch("/api/subadmin/approve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ staff_id: staffId }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data?.error || "Approve failed");
+      }
+
+      // Optimistic UI update
+      setPending((prev) => prev.filter((p) => p.id !== staffId));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // ─────────────────────────────────────────────
+  // Revoke handler
+  // ─────────────────────────────────────────────
+  const handleRevoke = async (staffId) => {
+    try {
+      const res = await fetch("/api/subadmin/revoke", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ staff_id: staffId }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data?.error || "Revoke failed");
+      }
+
+      setPending((prev) => prev.filter((p) => p.id !== staffId));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // ─────────────────────────────────────────────
+  // UI STATES
+  // ─────────────────────────────────────────────
+  if (loading) {
+    return <p className="p-6">Loading dashboard…</p>;
   }
 
-  async function revokeUser(kindeUserId) {
-    await fetch(`/api/institutions/${data.institution.id}/revoke`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ target_kinde_user_id: kindeUserId }),
-    });
-    loadDashboard();
+  if (error) {
+    return (
+      <div className="p-6 rounded-md bg-red-50 text-red-700">
+        <p className="font-semibold">Dashboard error</p>
+        <p className="text-sm">{error}</p>
+      </div>
+    );
   }
-
-  if (loading) return <p className="p-6">Loading…</p>;
-
-  if (!data?.institution) return <p className="p-6">Access denied</p>;
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">{data.institution.name}</h1>
+    <div className="p-6 space-y-4">
+      <h1 className="text-xl font-bold">Pending Staff Requests</h1>
 
-      <div className="grid grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            Users: {data.stats.totalUsers}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            QR Codes: {data.stats.totalQrCodes}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            Pending: {data.stats.pendingApprovals}
-          </CardContent>
-        </Card>
-      </div>
+      {pending.length === 0 && (
+        <p className="text-muted-foreground">
+          No pending requests for your institution.
+        </p>
+      )}
 
-      <Card>
-        <CardContent className="p-4">
-          <h2 className="font-medium mb-3">Approved Users</h2>
-          {data.users.length === 0 && <p className="text-sm">No users</p>}
-          <ul className="space-y-2">
-            {data.users.map((u) => (
-              <li key={u.kindeUserId} className="flex justify-between">
-                <span>{u.email}</span>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => revokeUser(u.kindeUserId)}
-                >
-                  Revoke
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+      {pending.map((user) => (
+        <div
+          key={user.id}
+          className="flex items-center justify-between rounded-lg border p-4"
+        >
+          <div>
+            <p className="font-medium">
+              {user.name} {user.surname}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Requested on {new Date(user.createdAt).toLocaleDateString()}
+            </p>
+          </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <h2 className="font-medium mb-3">Pending Approvals</h2>
-          {data.pending.length === 0 && <p className="text-sm">None</p>}
-          <ul className="space-y-2">
-            {data.pending.map((u) => (
-              <li key={u.kindeUserId} className="flex justify-between">
-                <span>{u.email}</span>
-                <Button size="sm" onClick={() => approveUser(u.kindeUserId)}>
-                  Approve
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleApprove(user.id)}
+              className="rounded bg-green-600 px-3 py-1 text-white"
+            >
+              Approve
+            </button>
+
+            <button
+              onClick={() => handleRevoke(user.id)}
+              className="rounded bg-red-600 px-3 py-1 text-white"
+            >
+              Revoke
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

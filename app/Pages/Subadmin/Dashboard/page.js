@@ -1,154 +1,161 @@
 "use client";
 
-import ErrorAPIFailure from "@components/Error handling/DashBoard API failure/Error";
-import ErrorNDC from "@components/Error handling/No Dashboard Content/Error";
-import LoadingAnimation from "@components/Loading Animation/Loading";
 import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Users, Clock } from "lucide-react";
 
-export default function SubAdminDashboard() {
+export default function DashboardPage() {
+  const [data, setData] = useState({
+    totalUsers:0,
+    pendingUser:0,
+    pending:[],
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [data, setData] = useState(null);
-  const [profile, setProfile] = useState(null);
-
-  const loadDashboard = async () => {
-    try {
-      setLoading(true);
-
-      const res = await fetch("/api/dashboard");
-
-      if (!res.ok) {
-        console.error("Dashboard API failed:", res.status);
-        setLoading(false);
-        return;
-      }
-
-      const data = await res.json();
-      setDashboardData(data);
-    } catch (error) {
-      console.error("Dashboard fetch error:", error);
-    } finally {
-      setLoading(false); // 🔴 THIS was missing before
-    }
-  };
 
   useEffect(() => {
-    loadDashboard();
+    fetchDashboard();
   }, []);
 
-  async function approve(targetKindeUserId) {
+  async function fetchDashboard() {
+    try {
+      const res = await fetch("/api/subadmin/dashboard");
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.error || "Failed to load dashboard");
+      }
+      setData(await res.json());
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function approveUser(id) {
     await fetch("/api/subadmin/approve", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-kinde-user-id": profile.kindeUserId, // ✅ SUBADMIN
-      },
-      body: JSON.stringify({ targetKindeUserId }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ staffProfileId: id }),
     });
-
-    loadDashboard();
+    fetchDashboard();
   }
 
-  // ---------------- UI STATES ----------------
-
-  if (loading) {
-    return <LoadingAnimation />;
-  }
-
-  if (error) {
-    return <ErrorAPIFailure />;
-  }
-
-  if (!data) {
-    return <ErrorNDC />;
-  }
-
-  // ---------------- SUCCESS UI ----------------
-
-  return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Sub-admin Dashboard</h1>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Stat label="Approved Users" value={data.stats.approved} />
-        <Stat label="Pending Requests" value={data.stats.pending} />
-        <Stat label="Total Users" value={data.stats.totalUsers} />
-        <Stat label="QR Codes Generated" value={data.stats.totalQRCodes} />
-      </div>
-
-      {/* Pending users */}
-      <section>
-        <h2 className="text-lg font-medium mb-2">Pending Users</h2>
-        {data.pending.length === 0 && (
-          <p className="text-sm text-gray-500">No pending requests</p>
-        )}
-
-        {data.pending.map((u) => (
-          <div
-            key={u.kindeUserId}
-            className="flex justify-between items-center border-b py-2"
-          >
-            <span>
-              {u.name} {u.surname}
-            </span>
-            <button
-              className="text-sm text-green-600"
-              onClick={() => approve(u.kindeUserId)}
-            >
-              Approve
-            </button>
-          </div>
-        ))}
-      </section>
-
-      {/* Approved users */}
-      <section>
-        <h2 className="text-lg font-medium mb-2">Approved Users</h2>
-
-        {data.approved.map((u) => (
-          <div
-            key={u.kindeUserId}
-            className="flex justify-between items-center border-b py-2"
-          >
-            <span>
-              {u.name} {u.surname}
-            </span>
-            <button
-              className="text-sm text-red-600"
-              onClick={() => revoke(u.kindeUserId)}
-            >
-              Revoke
-            </button>
-          </div>
-        ))}
-      </section>
-    </div>
-  );
-
-  // ---------------- ACTIONS ----------------
-
-  async function revoke(targetKindeUserId) {
+  async function revokeUser(id) {
     await fetch("/api/subadmin/revoke", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-kinde-user-id": data.kindeUserId,
-      },
-      body: JSON.stringify({ targetKindeUserId }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ staffProfileId: id }),
     });
-
-    loadDashboard();
+    fetchDashboard();
   }
+
+  return (
+    <div className="px-4 md:px-6 lg:px-8 pt-24 pb-12 max-w-7xl mx-auto space-y-10">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Institution overview and approvals
+        </p>
+      </div>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <StatCard
+          title="Total Users"
+          value={data?.totalUsers}
+          icon={<Users />}
+          loading={loading}
+        />
+        <StatCard
+          title="Pending Approvals"
+          value={data?.pendingUsers}
+          icon={<Clock />}
+          loading={loading}
+        />
+      </div>
+
+      {/* Pending Users Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Pending User Approvals</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <Skeleton className="h-32 w-full" />
+          ) : data.pending.length === 0 ? (
+            <p className="text-muted-foreground">No pending users</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.pending.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell>
+                      {user.name} {user.surname}
+                    </TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell className="text-right space-x-2">
+                      <Button size="sm" onClick={() => approveUser(user.id)}>
+                        Approve
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => revokeUser(user.id)}
+                      >
+                        Revoke
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
 
-// ---------------- SMALL COMPONENT ----------------
-
-function Stat({ label, value }) {
+function StatCard({ title, value, loading, icon }) {
   return (
-    <div className="border rounded p-4">
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-2xl font-bold">{value}</p>
-    </div>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        {loading ? (
+          <Skeleton className="h-8 w-20" />
+        ) : (
+          <div className="text-3xl font-bold">{Number(value ?? 0)}</div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

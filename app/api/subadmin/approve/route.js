@@ -1,34 +1,45 @@
-// app/api/sub-admin/approve/route.js
+  import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { staffProfiles } from "@/lib/schema";
-import { eq } from "drizzle-orm";
-import { NextResponse } from "next/server";
+import { eq, and } from "drizzle-orm";
+import { requireSubAdmin } from "@/lib/server/auth/requireSubAdmin";
 
 export async function POST(req) {
-  const kindeUserId = req.headers.get("x-kinde-user-id");
-  const { targetKindeUserId } = await req.json();
+  try {
+    const subadmin = await requireSubAdmin();
+    const { staff_id } = await req.json();
 
-  if (!kindeUserId || !targetKindeUserId) {
-    return NextResponse.json({ error: "Bad request" }, { status: 400 });
+    if (!staff_id) {
+      return NextResponse.json(
+        { error: "staff_id is required" },
+        { status: 400 }
+      );
+    }
+
+    const result = await db
+      .update(staffProfiles)
+      .set({ approved: true })
+      .where(
+        and(
+          eq(staffProfiles.id, staff_id),
+          eq(staffProfiles.institutionId, subadmin.institutionId),
+          eq(staffProfiles.role, "staff")
+        )
+      );
+
+    if (result.rowCount === 0) {
+      return NextResponse.json(
+        { error: "Staff not found or not allowed" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("❌ Approve API error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
-
-  const [subadmin] = await db
-    .select()
-    .from(staffProfiles)
-    .where(eq(staffProfiles.kindeUserId, kindeUserId))
-    .limit(1);
-
-  if (!subadmin || subadmin.role !== "subadmin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  await db
-    .update(staffProfiles)
-    .set({
-      role: "teacher",
-      institutionId: subadmin.institutionId,
-    })
-    .where(eq(staffProfiles.kindeUserId, targetKindeUserId));
-
-  return NextResponse.json({ success: true });
 }
