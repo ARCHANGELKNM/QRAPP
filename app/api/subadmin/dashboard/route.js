@@ -1,58 +1,34 @@
-// app/api/subadmin/dashboard/route.js
-import { requireSubAdmin } from "@lib/server/auth/requireSubAdmin"; 
+import { NextResponse } from "next/server";
+import { requireSubAdmin } from "@/lib/server/auth/requireSubAdmin";
 import { db } from "@/lib/db";
-import { staffProfiles, qrCodes } from "@/lib/schema";
-import { eq, and, sql } from "drizzle-orm";
 
-export async function GET(req) {
+export async function GET() {
   try {
-    const user = await requireSubAdmin(req);
+    const subadmin = await requireSubAdmin();
 
-    if (!user?.institutionId) {
-      return new Response(
-        JSON.stringify({ error: "Missing institution" }),
-        { status: 400 }
-      );
-    }
+    const pendingUsers = await db.staffProfile.findMany({
+      where: {
+        institutionId: subadmin.institutionId,
+        approved: false,
+      },
+    });
 
-    const institutionId = user.institutionId;
+    const approvedUsers = await db.staffProfile.findMany({
+      where: {
+        institutionId: subadmin.institutionId,
+        approved: true,
+      },
+    });
 
-    // Total users
-    const totalUsersRes = await db
-      .select({ count: sql`count(*)` })
-      .from(staffProfiles)
-      .where(eq(staffProfiles.institutionId, institutionId));
-
-    // Pending users
-    const pendingUsersRes = await db
-      .select({ count: sql`count(*)` })
-      .from(staffProfiles)
-      .where(
-        and(
-          eq(staffProfiles.institutionId, institutionId),
-          eq(staffProfiles.approved, false)
-        )
-      );
-
-    // Total QR codes
-    const totalQRCodesRes = await db
-      .select({ count: sql`count(*)` })
-      .from(qrCodes)
-      .where(eq(qrCodes.institutionId, institutionId));
-
-    return new Response(
-      JSON.stringify({
-        totalUsers: Number(totalUsersRes[0]?.count ?? 0),
-        pendingUsers: Number(pendingUsersRes[0]?.count ?? 0),
-        totalQRCodes: Number(totalQRCodesRes[0]?.count ?? 0),
-      }),
-      { status: 200 }
-    );
+    return NextResponse.json({
+      stats: {
+        totalUsers: approvedUsers.length,
+        pendingUsers: pendingUsers.length,
+      },
+      pendingUsers,
+      approvedUsers,
+    });
   } catch (err) {
-    console.error("Dashboard API error:", err);
-    return new Response(
-      JSON.stringify({ error: "Internal server error" }),
-      { status: 500 }
-    );
+    return new NextResponse("Forbidden", { status: 403 });
   }
 }

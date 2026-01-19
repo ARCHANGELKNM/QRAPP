@@ -1,64 +1,39 @@
-import { requireAuth } from "@/lib/server/auth/requireAuth";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { staffProfiles, institutions } from "@/lib/schema";
+import { staffProfiles } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export async function GET() {
   try {
-    const auth = await requireAuth();
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
 
-    if (!auth.ok) {
-      return Response.json(
-        { error: auth.error },
-        { status: auth.status }
-      );
+    if (!user) {
+      return NextResponse.json(null, { status: 401 });
     }
 
-    const user = auth.user;
+    // 🔹 Fetch staff profile using Kinde ID
+    const staffProfile = await db
+      .select()
+      .from(staffProfiles)
+      .where(eq(staffProfiles.kindeUserId, user.id))
+      .limit(1);
 
-    // ✅ CORRECT DRIZZLE USAGE
-    const staffProfile = await db.query.staffProfiles.findFirst({
-      where: eq(staffProfiles.kindeUserId, user.id),
-    });
-
-    if (!staffProfile) {
-      return Response.json({
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        surname: user.surname,
-        staff_profile: null,
-      });
-    }
-
-    let institution = null;
-
-    if (staffProfile.institutionId) {
-      institution = await db.query.institutions.findFirst({
-        where: eq(institutions.id, staffProfile.institutionId),
-      });
-    }
-
-    return Response.json({
+    return NextResponse.json({
       id: user.id,
       email: user.email,
-      name: user.name,
-      surname: user.surname,
-
-      institutionId: staffProfile.institutionId || null,
-      institutionName: institution?.name || null,
-
-      staff_profile: {
-        role: staffProfile.role,
-        approved: staffProfile.approved,
-      },
+      name: user.given_name || "",
+      surname: user.family_name || "",
+      staff_profile: staffProfile[0] || null,
+      approved: staffProfile[0]?.approved ?? false,
+      institutionId: staffProfile[0]?.institutionId ?? null,
     });
   } catch (error) {
     console.error("❌ Profile API error:", error);
-
-    return Response.json(
-      { error: "Internal server error" },
-      { status: 500 }
+    return NextResponse.json(
+      { error: "Failed to load profile" },
+      { status: 500 },
     );
   }
 }

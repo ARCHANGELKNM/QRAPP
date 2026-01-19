@@ -20,16 +20,17 @@ import { ErrorCreateAccount } from "@components/Error handling/Create Account/Er
 import LoadingAnimation from "@components/Loading Animation/Loading";
 
 export default function GeneratorClient() {
+  const [qrPayLoad, setQrPayLoad] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [canGenerate, setCanGenerate] = useState(false);
+  const [accessState, setAccessState] = useState("loading");
 
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [grade, setGrade] = useState("");
 
-  const [autoFetchedInstitution, setAutoFetchedInstitution] = useState(null);
   const [manualInstitution, setManualInstitution] = useState("");
+  const [autoFetchedInstitution, setAutoFetchedInstitution] = useState(null);
 
   const [showQR, setShowQR] = useState(false);
 
@@ -37,26 +38,63 @@ export default function GeneratorClient() {
   const qrCodeRef = useRef(null);
 
   /* -----------------------------
-     LOAD PROFILE (ONCE)
+     INIT QR INSTANCE (ONCE)
+  ------------------------------*/
+  useEffect(() => {
+    if (!showQR)return;
+    if (!qrPayLoad)return;
+    if (!qrRef.current)return; 
+    
+    qrRef.current.innerHTML = "";
+
+    qrCodeRef.current = new QRCodeStyling({
+      width: 250,
+      height: 250,
+      type: "svg",
+      data: qrPayLoad,
+      dotsOptions: {
+        color: "#000",
+        type: "rounded",
+      },
+      backgroundOptions: {
+        color: "#fff",
+      },
+    });
+  }, []);
+
+  /* -----------------------------
+     LOAD PROFILE
   ------------------------------*/
   useEffect(() => {
     async function loadProfile() {
       try {
         const res = await fetch("/api/profile");
         if (!res.ok) {
-          setProfile(null);
+          setAccessState("unauthenticated");
           return;
         }
 
         const data = await res.json();
         setProfile(data);
+        setAutoFetchedInstitution(data?.institutionName || null);
 
-        if (data?.approved === true && data?.institutionId) {
-          setCanGenerate(true);
-          setAutoFetchedInstitution(data.institutionName || null);
+        if (!data.staffProfile) {
+          setAccessState("no-profile");
+          return;
+        }
+
+        if (data.staffProfile.approved === false) {
+          setAccessState("pending");
+          return;
+        }
+
+        if (data.staffProfile.approved === true) {
+          setAccessState(true);
+          return;
         }
       } catch (err) {
-        console.error("Profile load error:", err);
+        console.error("Profile error:", err);
+        setAccessState("unauthenticated");
       } finally {
         setLoading(false);
       }
@@ -66,11 +104,60 @@ export default function GeneratorClient() {
   }, []);
 
   /* -----------------------------
+     APPEND QR WHEN MODAL OPENS
+  ------------------------------*/
+  useEffect(() => {
+    if (!showQR || !qrPayLoad) return;
+    if (!qrRef.current || !qrCodeRef.current) return;
+
+    qrRef.current.innerHTML = "";
+    qrCodeRef.current.append(qrRef.current);
+  }, [qrPayLoad, showQR]);
+
+  /* -----------------------------
+     HANDLERS
+  ------------------------------*/
+  function handleGenerateClick() {
+    if (accessState === true) return;
+
+    const institution = autoFetchedInstitution || manualInstitution || "N/A";
+
+    const combined = `${name || "N/A"} ${surname || "N/A"} | Grade ${
+      grade || "N/A"
+    } | ${institution}`;
+
+    qrCodeRef.current.update({
+      data:combined,
+    });
+    setQrPayLoad(combined);
+    setShowQR(true);
+
+    // non-blocking log
+    fetch("/api/qr-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: combined,
+        institutionName: institution,
+      }),
+    }).catch(() => {});
+  }
+
+  function handleDownload() {
+    qrCodeRef.current.download({
+      name: "qrcode",
+      extension: "png",
+    });
+  }
+
+  /* -----------------------------
      ACCESS STATES
   ------------------------------*/
-  if (loading) return <LoadingAnimation />;
+  if (loading === "loading") {
+    return <LoadingAnimation />;
+  }
 
-  if (!profile) {
+  if (accessState === "unauthenticated") {
     return (
       <ErrorCreateAccount
         title="You're not logged in"
@@ -80,60 +167,27 @@ export default function GeneratorClient() {
     );
   }
 
-  if (!canGenerate) {
+  if (accessState === "no-profile") {
     return (
       <ErrorAdminApproval
-        title="Approval Required"
+        title="Request Access Required"
         description="You need approval before generating QR codes."
         actionLabel="Request Access"
       />
     );
   }
 
-  /* -----------------------------
-     GENERATE QR
-  ------------------------------*/
-  async function handleGenerateClick() {
-    const institution = autoFetchedInstitution || manualInstitution || "N/A";
-
-    const combined = `${name || "N/A"} ${surname || "N/A"} | Grade ${
-      grade || "N/A"
-    } | ${institution}`;
-
-    // Render QR immediately
-    setShowQR(true);
-
-    if (qrRef.current) {
-      qrRef.current.innerHTML = "";
-
-      qrCodeRef.current = new QRCodeStyling({
-        width: 250,
-        height: 250,
-        type: "svg",
-        data: combined,
-        dotsOptions: { type: "rounded" },
-        backgroundOptions: { color: "#fff" },
-      });
-
-      qrCodeRef.current.append(qrRef.current);
-    }
-
-    // Log QR (non-blocking)
-    fetch("/api/qr-code", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data: combined }),
-    }).catch(() => {});
-  }
-
-  function handleDownload() {
-    if (qrCodeRef.current) {
-      qrCodeRef.current.download({ name: "qra-code", extension: "png" });
-    }
+  if (accessState === "pending") {
+    return (
+      <ErrorAdminApproval
+        title="Approval Pending"
+        description="Your access request is still under review."
+      />
+    );
   }
 
   /* -----------------------------
-     RENDER
+     UI (UNCHANGED)
   ------------------------------*/
   return (
     <div className="flex justify-center items-center">
@@ -146,10 +200,21 @@ export default function GeneratorClient() {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-          <Input placeholder="Surname" value={surname} onChange={(e) => setSurname(e.target.value)} />
-          <Input placeholder="Grade" value={grade} onChange={(e) => setGrade(e.target.value)} />
-
+          <Input
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            placeholder="Surname"
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
+          />
+          <Input
+            placeholder="Grade"
+            value={grade}
+            onChange={(e) => setGrade(e.target.value)}
+          />
           <Input
             placeholder="Institution"
             value={autoFetchedInstitution || manualInstitution}
