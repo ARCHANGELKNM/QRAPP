@@ -1,34 +1,54 @@
 import { NextResponse } from "next/server";
-import { requireSubAdmin } from "@/lib/server/auth/requireSubAdmin";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { db } from "@/lib/db";
+import { staffProfiles } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const subadmin = await requireSubAdmin();
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
 
-    const pendingUsers = await db.staffProfile.findMany({
-      where: {
-        institutionId: subadmin.institutionId,
-        approved: false,
-      },
-    });
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    const approvedUsers = await db.staffProfile.findMany({
-      where: {
-        institutionId: subadmin.institutionId,
-        approved: true,
-      },
-    });
+    /* 🔍 Fetch THIS user's profile */
+    const [subadminProfile] = await db
+      .select()
+      .from(staffProfiles)
+      .where(eq(staffProfiles.kindeUserId, user.id))
+      .limit(1);
+
+    if (!subadminProfile) {
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+    }
+
+    /* 👉 IMPORTANT: Use this field */
+    const institutionId = subadminProfile.institutionId;
+
+    if (!institutionId) {
+      return NextResponse.json(
+        { error: "Subadmin has no institution assigned" },
+        { status: 400 },
+      );
+    }
+
+    /* 📌 Fetch ALL users tied to this subadmin's institution */
+    const allProfiles = await db
+      .select()
+      .from(staffProfiles)
+      .where(eq(staffProfiles.institutionId, institutionId));
 
     return NextResponse.json({
-      stats: {
-        totalUsers: approvedUsers.length,
-        pendingUsers: pendingUsers.length,
-      },
-      pendingUsers,
-      approvedUsers,
+      institutionId,
+      users: allProfiles,
     });
-  } catch (err) {
-    return new NextResponse("Forbidden", { status: 403 });
+  } catch (error) {
+    console.error("❌ Dashboard API error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

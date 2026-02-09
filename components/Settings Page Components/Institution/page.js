@@ -44,7 +44,7 @@ export default function InstitutionSettings() {
     setLoading(true);
     setMessage("");
 
-    const res = await fetch("/api/institutions/request", {
+    const res = await fetch("/api/institutions/request-access", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

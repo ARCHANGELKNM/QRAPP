@@ -1,23 +1,28 @@
 import { NextResponse } from "next/server";
-import { requireAuth } from "@/lib/server/auth/requireAuth";
-import { getStaffProfile } from "@/lib/server/auth/StaffProfile";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+
+import { db } from "@/lib/db";
+import { institutions } from "@/lib/schema";
 
 export async function GET() {
   try {
-    const user = await requireAuth();
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
 
-    const profile = await getStaffProfile(user.id);
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    return NextResponse.json({
-      user,
-      profile, // can be null — frontend handles this
-    });
-  } catch (err) {
-    console.error("Profile API error:", err);
+    const rows = await db
+      .select()
+      .from(institutions);
 
+    return NextResponse.json({ institutions: rows });
+  } catch (error) {
+    console.error("❌ Institutions API error:", error);
     return NextResponse.json(
-      { error: err.message || "Unauthorized" },
-      { status: 401 }
+      { error: "Internal Server Error" },
+      { status: 500 }
     );
   }
 }

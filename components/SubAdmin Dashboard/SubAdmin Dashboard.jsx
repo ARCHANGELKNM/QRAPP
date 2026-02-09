@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -8,170 +10,196 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@components/ui/table";
-import { Button } from "@components/ui/button";
-import { Badge } from "@components/ui/badge";
+} from "@/components/ui/table";
+
+import ErrorAdminApproval from "@components/Error handling/Admin Approval/Error";
+import { ErrorCreateAccount } from "@components/Error handling/Create Account/Error";
 import LoadingAnimation from "@components/Loading Animation/Loading";
 
-/* ===============================
-   DASHBOARD COMPONENT
-================================ */
 export default function Dashboard() {
+  /* -----------------------------
+     HOOKS — ALWAYS TOP LEVEL
+  ------------------------------*/
+  const [accessState, setAccessState] = useState("loading");
+  const [profile, setProfile] = useState(null);
   const [users, setUsers] = useState([]);
-  const [stats, setStats] = useState({
-    total: 0,
-    pending: 0,
-    approved: 0,
-  });
-  const [loading, setLoading] = useState(true);
+  const [loadingData, setLoadingData] = useState(true);
 
-  /* -------------------------------
-     FETCH DASHBOARD DATA
-  -------------------------------- */
-  const fetchDashboard = async () => {
-    try {
-      setLoading(true);
-
-      const res = await fetch("/api/subadmin/dashboard");
-      if (!res.ok) throw new Error("Failed to fetch dashboard");
-
-      const data = await res.json();
-
-      const usersList = data.users || [];
-
-      setUsers(usersList);
-
-      setStats({
-        total: usersList.length,
-        pending: usersList.filter(u => u.approved === false ).length,
-        approved: usersList.filter(u => u.approved === true).length,
-      });
-    } catch (err) {
-      console.error("Dashboard fetch error:", err);
-      setUsers([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  /* -----------------------------
+     CHECK ACCESS
+  ------------------------------*/
   useEffect(() => {
-    fetchDashboard();
+    async function check() {
+      try {
+        const res = await fetch("/api/profile");
+        const data = await res.json();
+
+        if (!res.ok) {
+          setAccessState("unauthenticated");
+          return;
+        }
+
+        setProfile(data);
+
+        // Staff or Subadmin
+        if (data.approved === true) {
+          setAccessState(true);
+          return;
+        }
+
+        // Not approved yet
+        if (data.approved === false) {
+          setAccessState("pending");
+          return;
+        }
+      } catch (err) {
+        setAccessState("unauthenticated");
+      }
+    }
+
+    check();
   }, []);
 
-  /* -------------------------------
-     ACTIONS
-  -------------------------------- */
-  const approveUser = async (userId) => {
-    await fetch("/api/subadmin/approve", {
+  /* -----------------------------
+     LOAD USERS ONCE APPROVED
+  ------------------------------*/
+  useEffect(() => {
+    if (accessState !== true) return;
+
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/subadmin/dashboard");
+        const data = await res.json();
+
+        if (data.users) {
+          setUsers(data.users);
+        }
+      } catch (err) {
+        console.error("Dashboard fetch error:", err);
+      }
+
+      setLoadingData(false);
+    }
+
+    fetchData();
+  }, [accessState]);
+
+  /* -----------------------------
+     ACTION HANDLER
+  ------------------------------*/
+  async function handleAction(id, action) {
+    const url =
+      action === "approve" ? "/api/subadmin/approve" : "/api/subadmin/revoke";
+
+    await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId }),
+      body: JSON.stringify({ staffProfileId: id }),
     });
 
-    fetchDashboard();
-  };
-
-  const revokeUser = async (userId) => {
-    await fetch("/api/subadmin/revoke", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId }),
-    });
-
-    fetchDashboard();
-  };
-
-  if (loading) {
-    return (<LoadingAnimation/> );
+    // refresh table
+    const res = await fetch("/api/subadmin/dashboard");
+    const data = await res.json();
+    setUsers(data.users || []);
   }
 
-  /* ===============================
-     RENDER
-================================ */
+  /* -----------------------------
+     ACCESS STATE HANDLING
+  ------------------------------*/
+  if (accessState === "loading") {
+    return <LoadingAnimation />;
+  }
+
+  if (accessState === "unauthenticated") {
+    return <ErrorCreateAccount />;
+  }
+
+  if (accessState === "pending") {
+    return <ErrorAdminApproval />;
+  }
+
+  if (accessState !== true) {
+    return <ErrorAdminApproval />;
+  }
+
+  /* -----------------------------
+     UI (RESPONSIVE & CENTERED)
+  ------------------------------*/
   return (
-    <div className="space-y-8">
-      {/* ===== STATS ===== */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard label="Total Users" value={stats.total} />
-        <StatCard label="Pending Approval" value={stats.pending} />
-        <StatCard label="Approved Users" value={stats.approved} />
-      </div>
+    <div className="min-h-screen ">
+      {/* Main container - centered with max-width */}
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex flex-col gap-2">
+            <h1 className="text-3xl font-bold tracking-tight">Subadmin Dashboard</h1>
+            <p className="text-sm text-muted-foreground">Manage staff approvals and access</p>
+          </div>
 
-      {/* ===== USERS TABLE ===== */}
-      <div className="rounded-xl border overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Surname</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Action</TableHead>
-            </TableRow>
-          </TableHeader>
+          {/* Table Container - Responsive */}
+          <div className=" overflow-hidden">
+            {loadingData ? (
+              <div className="flex items-center justify-center p-8">
+                <LoadingAnimation />
+              </div>
+            ) : users.length === 0 ? (
+              <div className="flex items-center justify-center p-8">
+                <p className="text-muted-foreground">No users to manage </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50">
+                      <TableHead className="font-semibold">Name</TableHead>
+                      <TableHead className="font-semibold">Surname</TableHead>
+                      <TableHead className="font-semibold">Status</TableHead>
+                      <TableHead className="font-semibold text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
 
-          <TableBody>
-            {users.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center text-sm">
-                  No users found
-                </TableCell>
-              </TableRow>
+                  <TableBody>
+                    {users.map((u) => (
+                      <TableRow key={u.id} className="hover:bg-muted/50 transition-colors">
+                        <TableCell className="font-medium">{u.name || "—"}</TableCell>
+                        <TableCell>{u.surname || "—"}</TableCell>
+
+                        <TableCell>
+                          {u.approved ? (
+                            <Badge className="bg-green-600 hover:bg-green-700">Approved</Badge>
+                          ) : (
+                            <Badge variant="destructive">Pending</Badge>
+                          )}
+                        </TableCell>
+
+                        <TableCell className="text-right">
+                          <div className="flex gap-2 justify-end flex-wrap">
+                            {u.approved ? (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleAction(u.id, "revoke")}
+                              >
+                                Revoke
+                              </Button>
+                            ) : (
+                              <Button 
+                                size="sm"
+                                onClick={() => handleAction(u.id, "approve")}
+                              >
+                                Approve
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
-
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.surname}</TableCell>
-
-                <TableCell>
-                  <Badge
-                    variant={
-                      user.approved === true
-                        ? "success"
-                        : "secondary"
-                    }
-                  >
-                    {user.approved}
-                  </Badge>
-                </TableCell>
-
-                <TableCell className="text-right">
-                  {user.approved === false && (
-                    <Button
-                      size="sm"
-                      onClick={() => approveUser(user.id)}
-                    >
-                      Approve
-                    </Button>
-                  )}
-
-                  {user.approved === true && (
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => revokeUser(user.id)}
-                    >
-                      Revoke
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+          </div>
+        </div>
       </div>
-    </div>
-  );
-}
-
-/* ===============================
-   SMALL STAT CARD
-================================ */
-function StatCard({ label, value }) {
-  return (
-    <div className="rounded-xl border p-4">
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="text-3xl font-bold mt-1">{value}</p>
     </div>
   );
 }

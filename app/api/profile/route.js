@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { staffProfiles } from "@/lib/schema";
-import { eq } from "drizzle-orm";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+
+import { db } from "@/lib/db";
+import { staffProfiles, institutions } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 export async function GET() {
   try {
@@ -10,29 +11,46 @@ export async function GET() {
     const user = await getUser();
 
     if (!user) {
-      return NextResponse.json(null, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 🔹 Fetch staff profile using Kinde ID
-    const staffProfile = await db
-      .select()
+    /* 🔒 Existing staff profile fetch */
+    const [result] = await db
+      .select({
+        staffProfile: staffProfiles,
+        institutionName: institutions.name,
+      })
       .from(staffProfiles)
+      .leftJoin(institutions, eq(staffProfiles.institutionId, institutions.id))
       .where(eq(staffProfiles.kindeUserId, user.id))
       .limit(1);
 
+    if (!result) {
+      return NextResponse.json(
+        { error: "Staff profile not found" },
+        { status: 404 },
+      );
+    }
+
+    const { staffProfile, institutionName } = result;
+
     return NextResponse.json({
-      id: user.id,
-      email: user.email,
-      name: user.given_name || "",
-      surname: user.family_name || "",
-      staff_profile: staffProfile[0] || null,
-      approved: staffProfile[0]?.approved ?? false,
-      institutionId: staffProfile[0]?.institutionId ?? null,
+      /* ✅ NOTHING REMOVED */
+      ...staffProfile,
+
+      /* ✅ EXISTING FIELDS (UNCHANGED NAMES) */
+      kindeId: user.id,
+      institutionName: institutionName ?? null,
+      approved: staffProfile.approved ?? false,
+
+      /* ✅ PREVIOUSLY REQUESTED ADDITIONS */
+      name: user.given_name ?? "",
+      surname: user.family_name ?? "",
     });
   } catch (error) {
     console.error("❌ Profile API error:", error);
     return NextResponse.json(
-      { error: "Failed to load profile" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }

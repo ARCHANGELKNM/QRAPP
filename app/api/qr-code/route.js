@@ -1,35 +1,38 @@
 import { NextResponse } from "next/server";
-import { requireAuth } from "@/lib/server/auth/requireAuth";
 import { db } from "@/lib/db";
+import { qrCodes } from "@/lib/schema";
 
 export async function POST(req) {
   try {
-    const user = await requireAuth();
     const body = await req.json();
 
-    const staffProfile = await db.staffProfile.findFirst({
-      where: { userId: user.id },
-    });
+    const {
+      content,
+      generatedByKindeId,
+      generatedByName,
+      institutionName,
+    } = body;
 
-    if (!staffProfile || staffProfile.approved !== true) {
-      return new NextResponse("Not approved", { status: 403 });
+    if (!content) {
+      return NextResponse.json(
+        { error: "Missing content" },
+        { status: 400 }
+      );
     }
 
-    if (!body?.content) {
-      return new NextResponse("Missing QR content", { status: 400 });
-    }
-
-    await db.qrCode.create({
-      data: {
-        content: body.content,
-        institutionId: staffProfile.institutionId,
-        generatedByUserId: user.id,
-      },
+    await db.insert(qrCodes).values({
+      content,
+      generatedByKindeId: generatedByKindeId ?? null,
+      generatedByName: generatedByName ?? null,
+      institutionName: institutionName ?? null,
     });
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("❌ QR API error:", err);
-    return new NextResponse("Server error", { status: 500 });
+    console.error("QR API error:", err);
+    return NextResponse.json(
+      { error: "Failed to log QR code" },
+      { status: 500 }
+    );
   }
 }

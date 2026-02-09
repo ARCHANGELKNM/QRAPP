@@ -18,7 +18,7 @@ const Example = () => (
       <EmptyMedia>
         <BarChart3 className="h-16 w-16 text-muted-foreground" />
       </EmptyMedia>
-      <EmptyTitle>No data available</EmptyTitle>
+      <EmptyTitle>You are not a Sub-admin</EmptyTitle>
       <EmptyDescription>
          Hello there , you can only access this section as an Admin.
       </EmptyDescription>
