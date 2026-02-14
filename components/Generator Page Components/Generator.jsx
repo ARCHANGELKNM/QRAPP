@@ -106,16 +106,15 @@ export default function Generator() {
   /* -----------------------------
      ACCESS CONTROL (NO EARLY RETURN)
   ------------------------------*/
-  let screen = null;
 
   if (access.state === "loading") {
-    screen = <LoadingAnimation />;
+    return <LoadingAnimation />;
   } else if (access.state === "unauthenticated") {
-    screen = <ErrorCreateAccount />;
+    return  <ErrorCreateAccount />;
   } else if (access.state === "no-profile") {
-    screen = <ErrorCreateAccount />;
+    return  <ErrorCreateAccount />;
   } else if (access.state === "pending") {
-    screen = <ErrorAdminApproval />;
+    return  <ErrorAdminApproval />;
   } 
 
  

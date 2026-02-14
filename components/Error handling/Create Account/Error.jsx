@@ -33,7 +33,7 @@ export function ErrorCreateAccount() {
       <EmptyContent>
         <div className="flex gap-2">
           <RegisterLink>
-            <Button> Reegister </Button>
+            <Button> Register </Button>
           </RegisterLink>
           <LoginLink>
             <Button variant="outline"> Log in</Button>
