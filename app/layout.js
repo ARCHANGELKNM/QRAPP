@@ -5,7 +5,7 @@ import AuthProvider from "./AuthProvider";
 
 
 export const metadata = {
-  title: "QRAPP",
+  title: "QRA",
   description: "",
 };
 
@@ -16,8 +16,6 @@ export default function RootLayout({ children }) {
         <body>
           <div>
            {children}
-
-           
           </div>
         </body>
       </html>

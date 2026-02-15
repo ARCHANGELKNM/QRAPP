@@ -28,7 +28,7 @@ export default function CTA() {
       <div className="relative h-24 bg-gradient-to-b from-gray-100 to-transparent dark:from-gray-800" />
 
       {/* CTA SECTION */}
-      <section className="relative py-20 sm:py-28 bg-gradient-to-br from-primary via-indigo-600 to-purple-700 text-white overflow-hidden">
+      <section className=" w-screen relative py-20 sm:py-28 bg-gradient-to-br from-primary via-indigo-600 to-purple-700 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
 
         <motion.div

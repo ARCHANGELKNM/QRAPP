@@ -51,7 +51,7 @@ export default function Features() {
   }, []);
 
   return (
-    <section className="py-12 sm:py-16 bg-gray-100 dark:bg-gray-900 overflow-hidden">
+    <section className="w-screeen py-12 sm:py-16 bg-gray-100 dark:bg-gray-900 overflow-hidden">
       <motion.div
         ref={containerRef}
         className="flex space-x-4 sm:space-x-6 px-4 sm:px-6"
@@ -70,7 +70,7 @@ export default function Features() {
           bg-white dark:bg-gray-800
           shadow-md sm:shadow-lg
           flex flex-col items-center justify-center
-          transition-all duration-300
+          transition-all duration-700
           ${
             activeIndex === index
               ? "sm:scale-110 sm:ring-4 sm:ring-primary "
