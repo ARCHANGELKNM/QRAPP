@@ -75,7 +75,7 @@ export default function AccessRequestor() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 space-y-6 pb-16">
+    <div className="max-w-3xl mx-auto mt-10 ">
       {/* INSTITUTION SELECTOR */}
       <Card className="shadow-md">
         <CardHeader>

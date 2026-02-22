@@ -24,19 +24,21 @@ export function ErrorCreateAccount() {
             <AvatarFallback>LR</AvatarFallback>
           </Avatar>
         </EmptyMedia>
-        
+
         <EmptyDescription>
-          Seems like we don't have an account , let's create one or log into one to
-          proceed.
+          Seems like we don't have an account , let's create one or log into one
+          to proceed.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-3 w-full max-w-xs mx-auto mt-2">
           <RegisterLink>
-            <Button> Register </Button>
+            <Button className="w-full py-3 text-base">Register</Button>
           </RegisterLink>
           <LoginLink>
-            <Button variant="outline"> Log in</Button>
+            <Button variant="outline" className="w-full py-3 text-base">
+              Log in
+            </Button>
           </LoginLink>
         </div>
       </EmptyContent>
