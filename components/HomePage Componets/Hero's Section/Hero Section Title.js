@@ -25,7 +25,7 @@ export default function HeroTitle() {
         <span className="typing-cursor" />
       </span>
       <span className="ml-3 text-gray-900 dark:text-white">
-        , Create Scan
+       Create & Scan
       </span>
     </h1>
   );
