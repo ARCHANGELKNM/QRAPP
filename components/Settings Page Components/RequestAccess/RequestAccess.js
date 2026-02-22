@@ -1,112 +1,114 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 
-export default function RequestAccess() {
+export default function AccessRequestor() {
   const [profile, setProfile] = useState(null);
   const [institutions, setInstitutions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
   const [institutionId, setInstitutionId] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    async function load() {
-      const profileRes = await fetch("/api/profile");
-      const profileData = await profileRes.json();
-      setProfile(profileData);
+  /* ------------------------------
+      LOAD PROFILE
+  ------------------------------- */
+  async function loadProfile() {
+    try {
+      const res = await fetch("/api/profile");
+      const data = await res.json();
 
-      const instRes = await fetch("/api/institutions");
-      const instData = await instRes.json();
-      setInstitutions(instData);
+      setProfile(data);
+
+      setName(data.name );
+      setSurname(data.surname );
+      setInstitutionId(data.institutionId );
+    } catch (err) {
+      console.error("Profile load error:", err);
     }
-
-    load();
-  }, []);
-
-  async function requestAccess() {
-    setLoading(true);
-    setMessage("");
-
-    const res = await fetch("/api/institutions/request-access", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ institutionId }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setMessage(data.error || "Request failed");
-    } else {
-      setMessage("Request sent. Await approval.");
-      setProfile({ ...profile, role: "pending" });
-    }
-
-    setLoading(false);
   }
 
-  if (!profile) return null;
+  /* ------------------------------
+      LOAD INSTITUTIONS
+  ------------------------------- */
+  async function loadInstitutions() {
+    try {
+      const res = await fetch("/api/institutions");
+      const data = await res.json();
+
+      // Expected format: [{ id: 1, name: "School A" }]
+      setInstitutions(data || []);
+    } catch (err) {
+      console.error("Institutions fetch error:", err);
+    }
+  }
+
+  useEffect(() => {
+    Promise.all([loadProfile(), loadInstitutions()]).then(() =>
+      setLoading(false)
+    );
+  }, []);
+
+  /* ------------------------------
+      SAVE CHANGES
+  ------------------------------- */
+  async function saveAll() {
+    try {
+      await fetch("/institution/request-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          surname,
+          institutionId: Number(institutionId),
+        }),
+      });
+
+      loadProfile();
+    } catch (error) {
+      console.error("Profile update error:", error);
+    }
+  }
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 space-y-6">
-      <h1 className="text-2xl font-semibold">Settings</h1>
+    <div className="max-w-3xl mx-auto mt-10 space-y-6 pb-16">
 
-      <Card>
+      {/* INSTITUTION SELECTOR */}
+      <Card className="shadow-md">
         <CardHeader>
-          <CardTitle>Institution Access</CardTitle>
+          <CardTitle className="text-lg">Institution</CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-4">
-          {profile.role === "guest" && (
-            <p>Please sign in to request institution access.</p>
-          )}
+        <CardContent>
+          <Select
+            value={institutionId.toString()}
+            onValueChange={(value) => setInstitutionId(value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select your institution" />
+            </SelectTrigger>
 
-          {profile.role === "pending" && (
-            <p className="text-yellow-600">Your request is pending approval.</p>
-          )}
-
-          {profile.role === "teacher" && (
-            <p className="text-green-600">
-              Approved institution ID: {profile.institutionId}
-            </p>
-          )}
-
-          {(profile.role === "guest" || profile.role === "pending") && (
-            <>
-              <Select value={institutionId} onValueChange={setInstitutionId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select institution" />
-                </SelectTrigger>
-                <SelectContent>
-                  {institutions.map((inst) => (
-                    <SelectItem key={inst.id} value={String(inst.id)}>
-                      {inst.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Button
-                disabled={!institutionId || loading}
-                onClick={requestAccess}
-              >
-                {loading ? "Sending..." : "Request Access"}
-              </Button>
-            </>
-          )}
-
-          {message && <p className="text-sm">{message}</p>}
+            <SelectContent>
+              {institutions.map((inst) => (
+                <SelectItem key={inst.id} value={inst.id.toString()}>
+                  {inst.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </CardContent>
       </Card>
+
+      <div className="flex justify-end">
+        <Button onClick={saveAll} className="px-6">
+          Save Changes
+        </Button>
+      </div>
     </div>
   );
 }
