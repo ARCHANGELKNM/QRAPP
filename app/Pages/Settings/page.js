@@ -5,8 +5,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { LogOut, UserCog, ShieldCheck, Bell, Globe, Key } from "lucide-react";
-import AccessRequestor from "/RequestAccess/RequestAccess";
+import { LogOut, UserCog, ShieldCheck, Globe, Key } from "lucide-react";
+import AccessRequestor from "@/components/Settings Page Components/RequestAccess/RequestAccess";
 
 export default function SettingsPage() {
   const [profile, setProfile] = useState(null);
