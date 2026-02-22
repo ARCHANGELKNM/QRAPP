@@ -76,7 +76,6 @@ export default function AccessRequestor() {
 
   return (
     <div className="max-w-3xl mx-auto mt-10 space-y-6 pb-16">
-
       {/* INSTITUTION SELECTOR */}
       <Card className="shadow-md">
         <CardHeader>
@@ -85,7 +84,7 @@ export default function AccessRequestor() {
 
         <CardContent>
           <Select
-            value={institutionId.toString()}
+            value={institutionId ? institutionId.toString() : ""}
             onValueChange={(value) => setInstitutionId(value)}
           >
             <SelectTrigger>
