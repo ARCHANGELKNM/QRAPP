@@ -92,7 +92,7 @@ export default function AccessRequestor() {
             </SelectTrigger>
 
             <SelectContent>
-              {institutions.map((inst) => (
+              {(Array.isArray(institutions) ? institutions : []).map((inst) => (
                 <SelectItem key={inst.id} value={inst.id.toString()}>
                   {inst.name}
                 </SelectItem>
