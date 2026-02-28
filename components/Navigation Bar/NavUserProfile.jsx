@@ -36,12 +36,16 @@ import {
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { isAuthenticated, isLoading, user } = useKindeAuth();
+  // Onboard profile for authenticated users
+  React.useEffect(() => {
+    if (isLoading || !isAuthenticated) return;
+    fetch("/api/onboard", { method: "POST" });
+  }, [isAuthenticated, isLoading]);
 
   if (isLoading) return null;
 
   const initials =
-    (user?.given_name?.[0] || "") +
-    (user?.family_name?.[0] || "") || "G";
+    (user?.given_name?.[0] || "") + (user?.family_name?.[0] || "") || "G";
 
   return (
     <SidebarMenu>
@@ -70,10 +74,7 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-          >
+          <DropdownMenuContent side={isMobile ? "bottom" : "right"} align="end">
             {isAuthenticated ? (
               <DropdownMenuItem asChild>
                 <LogoutLink>

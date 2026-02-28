@@ -23,6 +23,17 @@ import { useProfile } from "@/hooks/useProfile";
 import { useAccessControl } from "@/hooks/useAccessControl";
 
 export default function Generator() {
+  // Onboard profile for authenticated users
+  const access = useAccessControl();
+  useEffect(() => {
+    if (
+      access.state === "loading" ||
+      access.state === "unauthenticated" ||
+      access.state === "no-profile"
+    )
+      return;
+    fetch("/api/onboard", { method: "POST" });
+  }, [access.state]);
   /* -----------------------------
      STATE + REFS (HOOKS FIRST!)
   ------------------------------*/
@@ -39,7 +50,6 @@ export default function Generator() {
   /* -----------------------------
      HOOKS FOR ACCESS + PROFILE
   ------------------------------*/
-  const access = useAccessControl();
   const { profile, institutionName } = useProfile();
 
   /* -----------------------------
@@ -109,19 +119,15 @@ export default function Generator() {
 
   if (access.state === "loading") {
     return <LoadingAnimation />;
-  } else if (access.state === "unauthenticated") {
-    return  <ErrorCreateAccount />;
-  } else if (access.state === "no-profile") {
-    return  <ErrorCreateAccount />;
-  } else if (access.state === "pending") {
-    return  <ErrorAdminApproval />;
-  } 
+  }
+  if (access.state === "unauthenticated" || access.state === "no-profile") {
+    return <ErrorCreateAccount />;
+  }
+  if (access.state === "pending") {
+    return <ErrorAdminApproval />;
+  }
 
- 
-
-  /* -----------------------------
-     FINAL UI (UNCHANGED)
-  ------------------------------*/
+  // Only authenticated and approved users reach here
   return (
     <div className="flex justify-center items-center">
       <Card className="w-96 mt-20 shadow-2xl">
@@ -131,24 +137,33 @@ export default function Generator() {
             Fill any fields you want
           </CardDescription>
         </CardHeader>
-
         <CardContent className="space-y-4">
-          <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-          <Input placeholder="Surname" value={surname} onChange={(e) => setSurname(e.target.value)} />
-          <Input placeholder="Grade" value={grade} onChange={(e) => setGrade(e.target.value)} />
+          <Input
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            placeholder="Surname"
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
+          />
+          <Input
+            placeholder="Grade"
+            value={grade}
+            onChange={(e) => setGrade(e.target.value)}
+          />
           <Input
             placeholder="Institution"
             value={institutionName || manualInstitution}
             onChange={(e) => setManualInstitution(e.target.value)}
             disabled={!!institutionName}
           />
-
           <Button className="w-full" onClick={handleGenerateClick}>
             Generate
           </Button>
         </CardContent>
       </Card>
-
       <AnimatePresence>
         {showQR && (
           <motion.div
@@ -163,7 +178,6 @@ export default function Generator() {
                 <X />
               </button>
             </div>
-
             <div
               ref={qrRef}
               onClick={handleDownload}

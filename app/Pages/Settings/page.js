@@ -16,6 +16,15 @@ export default function SettingsPage() {
   const route = useRouter("");
   const access = useAccessControl();
   const profile = access?.profile;
+  useEffect(() => {
+    if (
+      access.state === "loading" ||
+      access.state === "unauthenticated" ||
+      access.state === "no-profile"
+    )
+      return;
+    fetch("/api/onboard", { method: "POST" });
+  }, [access.state]);
 
   // If not authenticated or no profile, show error (like Generator page)
   if (access.state === "loading") {
