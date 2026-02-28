@@ -1,4 +1,5 @@
-"use client";
+import React from "react";
+("use client");
 
 import { useState, useEffect } from "react";
 
@@ -10,9 +11,7 @@ export function useProfile() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const res = await fetch(
-          "/api/profile",
-        );
+        const res = await fetch("/api/profile");
 
         if (res.status === 401) {
           setError("unauthenticated");

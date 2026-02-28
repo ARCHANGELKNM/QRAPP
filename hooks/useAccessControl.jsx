@@ -1,16 +1,11 @@
-"use client";
+import React from "react";
+("use client");
 
 import { useProfile } from "./useProfile";
 
 export function useAccessControl() {
-  const {
-    loading,
-    error,
-    profile,
-    isAuthenticated,
-    isStaff,
-    isSubadmin,
-  } = useProfile();
+  const { loading, error, profile, isAuthenticated, isStaff, isSubadmin } =
+    useProfile();
 
   if (loading) {
     return { state: "loading" };
