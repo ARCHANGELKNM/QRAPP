@@ -62,14 +62,14 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="overflow-hidden *:data-[sidebar=sidebar]:flex-row"
+      className="overflow-hidden flex flex-col h-full *:data-[sidebar=sidebar]:flex-row"
     >
       {/* This is the first sidebar */}
       {/* We disable collapsible and adjust width to icon. */}
       {/* This will make the sidebar appear as icons. */}
       <Sidebar
         collapsible="none"
-        className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r"
+        className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r flex flex-col h-full justify-between"
       >
         <SidebarHeader>
           <SidebarMenu>

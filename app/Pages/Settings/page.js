@@ -81,21 +81,10 @@ export default function SettingsPage() {
 
         {/* Institution Selector */}
       </Card>
+      
       <AccessRequestor/>
-      <Separator />
 
-      <div className="space-y-4">
-        <Card className="w-full p-4 hover:bg-muted/50 transition cursor-pointer">
-          <CardHeader className="flex flex-row items-center gap-3 p-0 pb-2">
-            <UserCog className="h-6 w-6 text-primary" />
-            <CardTitle className="text-lg">Account</CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground p-0">
-            Manage profile, institution, and user details....Coming Soon
-          </CardContent>
-        </Card>
-
-        <Card
+              <Card
           onClick={() => route.push("/policy")}
           className="w-full p-4 hover:bg-muted/50 transition cursor-pointer"
         >
@@ -108,15 +97,18 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
+      <div className="space-y-4">
         <Card className="w-full p-4 hover:bg-muted/50 transition cursor-pointer">
           <CardHeader className="flex flex-row items-center gap-3 p-0 pb-2">
-            <Globe className="h-6 w-6 text-primary" />
-            <CardTitle className="text-lg">Region & Language</CardTitle>
+            <UserCog className="h-6 w-6 text-primary" />
+            <CardTitle className="text-lg">Account</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground p-0">
-            Change app region, timezone, and language.
+            Manage profile, institution, and user details....Coming Soon
           </CardContent>
         </Card>
+
+
 
         <Card className="w-full p-4 hover:bg-muted/50 transition cursor-pointer">
           <CardHeader className="flex flex-row items-center gap-3 p-0 pb-2">
@@ -124,7 +116,7 @@ export default function SettingsPage() {
             <CardTitle className="text-lg">Security</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground p-0">
-            Update login methods and authentication options.
+            Update login methods and authentication options....Coming Soon
           </CardContent>
         </Card>
       </div>
