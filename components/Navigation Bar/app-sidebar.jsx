@@ -26,26 +26,26 @@ const data = {
   navMain: [
     {
       title: "Generator",
-      url: "/Pages/Generator",
+      url: "/generator",
       icon: QrCode,
       isActive: true,
     },
     {
       title: "Scanner",
-      url: "/Pages/Scanner",
+      url: "/scanner",
       icon: ScanLine,
       isActive: true,
     },
     {
       title: "Settings",
-      url: "/Pages/Settings",
+      url: "/settings",
       icon: Bolt,
       isActive: true,
     },
 
     {
       title: "Dashboard",
-      url: "/Pages/Subadmin/Dashboard",
+      url: "/dashboard",
       icon: Gauge,
       isActive: true,
     },

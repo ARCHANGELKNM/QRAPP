@@ -1,6 +1,6 @@
 "use client";
-import  { useState, useRef, useEffect } from "react";
 import React from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import QRCodeStyling from "qr-code-styling";
 import { X } from "lucide-react";

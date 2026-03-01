@@ -169,7 +169,7 @@ export default function PolicyPage() {
                 <button
                   onClick={() => {
                     alert("Policy accepted!");
-                    route.push("/Pages/Generator");
+                    route.push("/generator");
                   }}
                   className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
                 >
