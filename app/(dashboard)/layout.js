@@ -1,3 +1,4 @@
+import React from "react";
 import NavigationBar from "@components/Navigation Bar/NavBar";
 import "../globals.css";
 
@@ -10,7 +11,6 @@ export default function RootLayout({ children }) {
   return (
     <div>
       <NavigationBar />
-
       <main> {children} </main>
     </div>
   );
