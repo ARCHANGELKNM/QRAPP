@@ -56,7 +56,7 @@ export default function AccessRequestor() {
   /* ------------------------------
       SAVE CHANGES
   ------------------------------- */
-  async function saveAll() {
+  async function saveAll(newInstitutionId) {
     try {
       await fetch("/institution/request-access", {
         method: "POST",
@@ -64,10 +64,9 @@ export default function AccessRequestor() {
         body: JSON.stringify({
           name,
           surname,
-          institutionId: Number(institutionId),
+          institutionId: Number(newInstitutionId ?? institutionId),
         }),
       });
-
       loadProfile();
     } catch (error) {
       console.error("Profile update error:", error);
@@ -85,7 +84,10 @@ export default function AccessRequestor() {
         <CardContent>
           <Select
             value={institutionId ? institutionId.toString() : ""}
-            onValueChange={(value) => setInstitutionId(value)}
+            onValueChange={async (value) => {
+              setInstitutionId(value);
+              await saveAll(value);
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select your institution" />
@@ -101,12 +103,6 @@ export default function AccessRequestor() {
           </Select>
         </CardContent>
       </Card>
-
-      <div className="flex justify-end">
-        <Button onClick={saveAll} className="px-6">
-          Save Changes
-        </Button>
-      </div>
     </div>
   );
 }
