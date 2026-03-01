@@ -50,7 +50,7 @@ export default function CTA() {
 
             {/* GENERATOR button (protected) */}
             <button
-              onClick={() => handleProtectedNav("/Pages/Generator")}
+              onClick={() => handleProtectedNav("/generator")}
               className="px-8 py-4 rounded-xl bg-white text-black font-semibold text-lg hover:scale-105 transition-transform"
             >
               Generate a QR Code
@@ -58,7 +58,7 @@ export default function CTA() {
 
             {/* SCANNER button (protected) */}
             <button
-              onClick={() => handleProtectedNav("/Pages/Scanner")}
+              onClick={() => handleProtectedNav("/scanner")}
               className="px-8 py-4 rounded-xl border border-white/40 text-white font-medium text-lg hover:bg-white/10 transition"
             >
               Scanner
