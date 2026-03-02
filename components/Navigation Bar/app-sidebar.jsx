@@ -45,7 +45,7 @@ const data = {
 
     {
       title: "Dashboard",
-      url: "/ashboard",
+      url: "/dashboard",
       icon: Gauge,
       isActive: true,
     },
@@ -53,8 +53,6 @@ const data = {
 };
 
 export function AppSidebar() {
-  // Note: I'm using state to show active item.
-  // IRL you should use the url/router.
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
   const { setOpen } = useSidebar();
   const router = useRouter();
@@ -75,7 +73,7 @@ export function AppSidebar() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
-                <a href="#">
+                <a href="/">
                   <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                     <Command className="size-4" />
                   </div>
@@ -115,7 +113,7 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter>
+        <SidebarFooter   >
           <NavUser />
         </SidebarFooter>
       </Sidebar>
