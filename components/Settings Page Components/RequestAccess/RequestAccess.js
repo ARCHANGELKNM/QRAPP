@@ -70,8 +70,8 @@ export default function AccessRequestor() {
           surname: user.family_name,
           email: user.email,
           kindeId: user.id,
-          institutionId: Number(newInstitutionId ?? institutionId),
-          role: "staff",
+          institution_id: Number(newInstitutionId ?? institutionId),
+          role: "staf",
           approved: false,
         }),
       });

@@ -21,6 +21,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
+import { Command, Menu } from "lucide-react"; // Import Menu for the hamburger icon
+
+// ... inside AppSidebar component
+const { toggleSidebar } = useSidebar(); // Destructure toggleSidebar
 // This is sample data
 const data = {
   navMain: [
@@ -69,23 +73,30 @@ export function AppSidebar() {
         collapsible="none"
         className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r flex flex-col h-full justify-between"
       >
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
-                <a href="/">
-                  <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                    <Command className="size-4" />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">QRA</span>
-                  </div>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-        <SidebarContent>
+          <SidebarHeader>
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <SidebarMenuButton 
+          size="lg" 
+          className="md:h-8 md:p-0 group/logo" // Added a group class for hover logic
+          onClick={() => toggleSidebar()} // ✅ Logic to open/close sidebar
+        >
+          <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg relative">
+            {/* ✅ The Command icon (Default) */}
+            <Command className="size-4 transition-all group-hover/logo:opacity-0 group-hover/logo:scale-0" />
+            
+            {/* ✅ The Menu icon (Appears on hover) */}
+            <Menu className="size-4 absolute opacity-0 scale-0 transition-all group-hover/logo:opacity-100 group-hover/logo:scale-100" />
+          </div>
+          
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-medium">QRA</span>
+          </div>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  </SidebarHeader>
+  <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent className="px-1.5 md:px-0">
               <SidebarMenu>
@@ -114,7 +125,8 @@ export function AppSidebar() {
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter   >
-          <NavUser />
+          
+          <SidebarMenuItem>          <NavUser /> </SidebarMenuItem>
         </SidebarFooter>
       </Sidebar>
     </Sidebar>

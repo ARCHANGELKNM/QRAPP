@@ -120,10 +120,10 @@ export default function Generator() {
   if (access.state === "loading") {
     return <LoadingAnimation />;
   }
-  if (access.state === "unauthenticated" || access.state === "no-profile") {
+  if (access.state === "unauthenticated" ) {
     return <ErrorCreateAccount />;
   }
-  if (access.state === "pending") {
+  if (access.state === "pending" || access.state === "no-profile") {
     return <ErrorAdminApproval />;
   }
 

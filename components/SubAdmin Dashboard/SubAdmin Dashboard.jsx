@@ -44,7 +44,7 @@ export default function Dashboard() {
         // Staff or Subadmin
         if (data.approved === true && data.role === 'subadmin') {
           setAccessState(true);
-          return;
+          setLoadingData(false);
         }
 
         // Not approved yet
@@ -117,6 +117,7 @@ export default function Dashboard() {
     return <ErrorAdminApproval />;
   }
 
+  
   if (accessState !== true) {
     return <ErrorAdminApproval />;
   }

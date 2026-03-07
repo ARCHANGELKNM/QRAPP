@@ -12,8 +12,10 @@ import {
 
 export const title = "Empty Chart";
 
-const Example = () => (
-  <Empty>
+export default function ErrorAdminsOnly  ()  {
+ 
+  return(
+    <Empty>
     <EmptyHeader>
       <EmptyMedia>
         <BarChart3 className="h-16 w-16 text-muted-foreground" />
@@ -24,6 +26,8 @@ const Example = () => (
       </EmptyDescription>
     </EmptyHeader>
   </Empty>
-);
+  );
+  
+}
 
-export default Example;
+
