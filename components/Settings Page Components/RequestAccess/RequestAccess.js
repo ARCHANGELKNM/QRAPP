@@ -1,17 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs"; // Added Import
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 
 export default function AccessRequestor() {
+  const { isAuthenticated, user, isLoading: authLoading } = useKindeBrowserClient();
+  
   const [profile, setProfile] = useState(null);
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
   const [institutionId, setInstitutionId] = useState("");
 
   /* ------------------------------
@@ -21,12 +21,10 @@ export default function AccessRequestor() {
     try {
       const res = await fetch("/api/profile");
       const data = await res.json();
-
-      setProfile(data);
-
-      setName(data.name );
-      setSurname(data.surname );
-      setInstitutionId(data.institutionId );
+      if (data) {
+        setProfile(data);
+        setInstitutionId(data.institutionId);
+      }
     } catch (err) {
       console.error("Profile load error:", err);
     }
@@ -39,32 +37,42 @@ export default function AccessRequestor() {
     try {
       const res = await fetch("/api/institutions");
       const data = await res.json();
-
-      // Expected format: [{ id: 1, name: "School A" }]
-      setInstitutions(data || []);
+      // ✅ Correctly targets the "institutions" key from your API object
+      setInstitutions(data.institutions || []);
     } catch (err) {
       console.error("Institutions fetch error:", err);
+      setInstitutions([]);
     }
   }
 
   useEffect(() => {
-    Promise.all([loadProfile(), loadInstitutions()]).then(() =>
-      setLoading(false)
-    );
-  }, []);
+    // Only run fetches if Kinde has finished checking auth
+    if (!authLoading) {
+      Promise.all([loadProfile(), loadInstitutions()]).then(() =>
+        setLoading(false)
+      );
+    }
+  }, [authLoading]);
 
   /* ------------------------------
       SAVE CHANGES
   ------------------------------- */
   async function saveAll(newInstitutionId) {
+    if (!user) return;
+
     try {
       await fetch("/institution/request-access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          surname,
+          // ✅ Using Kinde details for the new profile entry
+          name: user.given_name,
+          surname: user.family_name,
+          email: user.email,
+          kindeId: user.id,
           institutionId: Number(newInstitutionId ?? institutionId),
+          role: "staff",
+          approved: false,
         }),
       });
       loadProfile();
@@ -73,8 +81,12 @@ export default function AccessRequestor() {
     }
   }
 
+  // Handle Auth Guard
+  if (!isAuthenticated) return null;
+
   return (
-    <div className="max-w-3xl mx-auto mt-10 ">
+    // ✅ Responsive padding: p-4 for mobile, mt-10 for desktop
+    <div className="max-w-3xl mx-auto mt-6 md:mt-10 px-4 md:px-0">
       {/* INSTITUTION SELECTOR */}
       <Card className="shadow-md">
         <CardHeader>
@@ -89,7 +101,7 @@ export default function AccessRequestor() {
               await saveAll(value);
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select your institution" />
             </SelectTrigger>
 

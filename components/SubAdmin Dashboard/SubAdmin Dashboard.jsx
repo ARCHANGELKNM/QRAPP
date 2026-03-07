@@ -42,7 +42,7 @@ export default function Dashboard() {
         setProfile(data);
 
         // Staff or Subadmin
-        if (data.approved === true) {
+        if (data.approved === true && data.role === 'subadmin') {
           setAccessState(true);
           return;
         }
@@ -129,12 +129,7 @@ export default function Dashboard() {
       {/* Main container - centered with max-width */}
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
-          {/* Header */}
-          <div className="flex flex-col gap-2">
-            <h1 className="text-3xl font-bold tracking-tight">Subadmin Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Manage staff approvals and access</p>
-          </div>
-
+      
           {/* Table Container - Responsive */}
           <div className=" overflow-hidden">
             {loadingData ? (
