@@ -1,6 +1,7 @@
 import React from "react";
 import NavigationBar from "@components/Navigation Bar/NavBar";
 import "../globals.css";
+import { SidebarProvider } from "@components/ui/sidebar";
 
 export const metadata = {
   title: "QRA",
@@ -9,9 +10,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <div>
+    <SidebarProvider> 
+      <div>
       <NavigationBar />
       <main> {children} </main>
     </div>
+    </SidebarProvider>
   );
 }
