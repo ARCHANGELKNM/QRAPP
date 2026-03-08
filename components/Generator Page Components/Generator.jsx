@@ -123,7 +123,7 @@ export default function Generator() {
   if (access.state === "unauthenticated" ) {
     return <ErrorCreateAccount />;
   }
-  if (access.state === "pending" || access.state === "no-profile") {
+  if (access.state === "pending" || access.state === false) {
     return <ErrorAdminApproval />;
   }
 

@@ -5,7 +5,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Command, Bolt, ScanLine, QrCode, Gauge , Menu } from "lucide-react";
 
-import { NavUser } from "@/components/Navigation Bar/NavUserProfile";
+import  NavUser from "./NavUser";
 
 import {
   Sidebar,
@@ -125,10 +125,11 @@ export function AppSidebar() {
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <SidebarMenuItem>
-            {" "}
-            <NavUser />{" "}
-          </SidebarMenuItem>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <NavUser />
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
     </Sidebar>

@@ -7,13 +7,13 @@ import { eq } from "drizzle-orm";
 export async function POST(req) {
   try {
     const user = await requireAuth();
-    
-        const institution_id = body.institution_id || body.institutionId;
+    const body = await req.json();
+    const institution_id = body.institution_id || body.institutionId;
 
     if (!institution_id) {
       return NextResponse.json(
         { error: "Institution ID required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -40,9 +40,6 @@ export async function POST(req) {
   } catch (err) {
     console.error("Request access API error:", err);
 
-    return NextResponse.json(
-      { error: "Request failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Request failed" }, { status: 500 });
   }
 }

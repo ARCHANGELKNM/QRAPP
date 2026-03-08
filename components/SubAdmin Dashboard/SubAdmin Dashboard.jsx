@@ -16,6 +16,7 @@ import {
 import ErrorAdminApproval from "@components/Error handling/Admin Approval/Error";
 import { ErrorCreateAccount } from "@components/Error handling/Create Account/Error";
 import LoadingAnimation from "@components/Loading Animation/Loading";
+import ErrorAdminsOnly from "@components/Error handling/Admin Access/Error1";
 
 export default function Dashboard() {
   /* -----------------------------
@@ -120,13 +121,9 @@ useEffect(() => {
   if (accessState === "pending") {
     return <ErrorAdminApproval />;
   }
-  
-  if (accessState !== true && !access.isSubadmin) {
-    return <ErrorAdminApproval />;
-  }
 
   if (accessState === 'unauthorized') {
-    return <ErrorAdminApproval/>;
+    return <ErrorAdminsOnly/>;
   }
 
   /* -----------------------------

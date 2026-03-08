@@ -61,7 +61,7 @@ export default function AccessRequestor() {
     if (!user) return;
 
     try {
-      await fetch("/institution/request-access", {
+      await fetch("/api/institution/request-access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -71,7 +71,7 @@ export default function AccessRequestor() {
           email: user.email,
           kindeId: user.id,
           institution_id: Number(newInstitutionId ?? institutionId),
-          role: "staf",
+          role: "staff",
           approved: false,
         }),
       });
