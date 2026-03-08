@@ -49,7 +49,7 @@ const data = {
 
     {
       title: "Dashboard",
-      url: "/Dashboard",
+      url: "/dashboard",
       icon: Gauge,
       isActive: true,
     },

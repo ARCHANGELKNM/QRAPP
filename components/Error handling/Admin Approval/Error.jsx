@@ -30,7 +30,7 @@ export default function ErrorAdminApproval() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button className="w-full" onClick={() => router.push("/Pages/Settings")}>
+        <Button className="w-full" onClick={() => router.push("/settings")}>
           <UserPlus />
           Request Access
         </Button>
