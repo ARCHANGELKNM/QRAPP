@@ -1,20 +1,17 @@
 import React from "react";
-import NavigationBar from "@components/Navigation Bar/NavBar";
+import NavBar from "@/components/Navigation Bar/NavBar"; // Import your NavigationBar component
 import "../globals.css";
-import { SidebarProvider } from "@components/ui/sidebar";
 
-export const metadata = {
-  title: "QRA",
-  description: "",
-};
 
 export default function RootLayout({ children }) {
   return (
-    <SidebarProvider>
-      <NavigationBar />
-      <SidebarInset>
-        <main> {children} </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <html lang="en">
+      <body>
+        {/* ✅ The NavBar (which contains SidebarProvider/AppSidebar) handles the layout */}
+        <NavBar>
+          {children}
+        </NavBar>
+      </body>
+    </html>
   );
 }

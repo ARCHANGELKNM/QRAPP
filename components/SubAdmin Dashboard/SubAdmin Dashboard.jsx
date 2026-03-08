@@ -29,37 +29,40 @@ export default function Dashboard() {
   /* -----------------------------
      CHECK ACCESS
   ------------------------------*/
-  useEffect(() => {
-    async function check() {
-      try {
-        const res = await fetch("/api/profile");
-        const data = await res.json();
-
-        if (!res.ok) {
-          setAccessState("unauthenticated");
-          return;
-        }
-
-        setProfile(data);
-
-        // Staff or Subadmin
-        if (data.approved === true && data.role === 'subadmin') {
-          setAccessState(true);
-          setLoadingData(false);
-        }
-
-        // Not approved yet
-        if (data.approved === false) {
-          setAccessState("pending");
-          return;
-        }
-      } catch (err) {
+useEffect(() => {
+  async function check() {
+    try {
+      const res = await fetch("/api/profile");
+      if (!res.ok) {
         setAccessState("unauthenticated");
+        return;
       }
-    }
 
-    check();
-  }, []);
+      const data = await res.json();
+      setProfile(data);
+
+      // ✅ THE GATEKEEPER: Must be BOTH subadmin AND approved
+      if (data.role === 'subadmin' && data.approved === true) {
+        setAccessState(true);
+        setLoadingData(false);
+        return; // Exit early since they are good to go
+      }
+
+      // ❌ If they are a subadmin but waiting for approval
+      if (data.role === 'subadmin' && data.approved === false) {
+        setAccessState("pending");
+        return;
+      }
+
+      // ❌ If they are logged in but not a subadmin at all
+      setAccessState("unauthorized");
+
+    } catch (err) {
+      setAccessState("unauthenticated");
+    }
+  }
+  check();
+}, []);
 
   /* -----------------------------
      LOAD USERS ONCE APPROVED
@@ -117,10 +120,13 @@ export default function Dashboard() {
   if (accessState === "pending") {
     return <ErrorAdminApproval />;
   }
-
   
-  if (accessState !== true) {
+  if (accessState !== true && !access.isSubadmin) {
     return <ErrorAdminApproval />;
+  }
+
+  if (accessState === 'unauthorized') {
+    return <ErrorAdminApproval/>;
   }
 
   /* -----------------------------

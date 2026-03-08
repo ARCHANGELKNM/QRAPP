@@ -11,7 +11,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
 
-export default function NavigationBar() {
+export default function NavBar({children}) {
   useEffect(() => {
     AOS.init({});
   }, []);
@@ -19,10 +19,14 @@ export default function NavigationBar() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className={"m-0"}>
+      <SidebarInset className="flex flex-col min-h-screen">
         <header className=" sticky top-0 flex h-10 shrink-0 items-center gap-2 border-b m-0 ">
           <SidebarTrigger className="-ml-1" />
         </header>
+
+        <main  className="flex-1 overflow-y-auto p-4 md:p-6">
+          {children}
+        </main>  
       </SidebarInset>
     </SidebarProvider>
   );
