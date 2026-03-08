@@ -10,11 +10,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <SidebarProvider> 
-      <div>
+    <SidebarProvider>
       <NavigationBar />
-      <main> {children} </main>
-    </div>
+      <SidebarInset>
+        <main> {children} </main>
+      </SidebarInset>
     </SidebarProvider>
   );
 }
