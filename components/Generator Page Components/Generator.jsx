@@ -24,16 +24,25 @@ import { useAccessControl } from "@/hooks/useAccessControl";
 
 export default function Generator() {
   // Onboard profile for authenticated users
-  const access = useAccessControl();
+  /* -----------------------------
+   ONBOARDING SYNC (Inside Generator)
+------------------------------*/
   useEffect(() => {
-    if (
-      access.state === "loading" ||
-      access.state === "unauthenticated" ||
-      access.state === "no-profile"
-    )
-      return;
-    fetch("/api/onboard", { method: "POST" });
-  }, [access.state]);
+    if (access.state !== true) return;
+    const syncProfile = async () => {
+      try {
+        await fetch("/api/onboard", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        console.log("Profile synced successfully");
+      } catch (err) {
+        console.error("Onboarding sync failed:", err);
+      }
+    };
+
+    syncProfile();
+  }, [access.state]); // Only runs when the access state switches to 'true'
   /* -----------------------------
      STATE + REFS (HOOKS FIRST!)
   ------------------------------*/
@@ -46,6 +55,7 @@ export default function Generator() {
 
   const qrRef = useRef(null);
   const qrCodeRef = useRef(null);
+  const access = useAccessControl();
 
   /* -----------------------------
      HOOKS FOR ACCESS + PROFILE
@@ -117,11 +127,10 @@ export default function Generator() {
      ACCESS CONTROL (NO EARLY RETURN)
   ------------------------------*/
 
-
-if (access.state === "loading") return <LoadingAnimation />;
-if (access.state === "unauthenticated") return <ErrorCreateAccount />;
-if (access.state === "no-profile" || access.state === "pending")
-  return <ErrorAdminApproval />;
+  if (access.state === "loading") return <LoadingAnimation />;
+  if (access.state === "unauthenticated") return <ErrorCreateAccount />;
+  if (access.state === "no-profile" || access.state === "pending")
+    return <ErrorAdminApproval />;
 
   // Only authenticated and approved users reach here
   return (

@@ -1,55 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs"; // Added Import
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
-
-
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Globe } from "lucide-react";
 
 export default function AccessRequestor() {
-  const {
-    isAuthenticated,
-    user,
-    isLoading: authLoading,
-  } = useKindeBrowserClient();
-
-  const [profile, setProfile] = useState(null);
+  const { isAuthenticated, user, isLoading: authLoading } = useKindeBrowserClient();
+  
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [institutionId, setInstitutionId] = useState("");
 
   /* ------------------------------
-      LOAD PROFILE
-  ------------------------------- */
-  async function loadProfile() {
-    try {
-      const res = await fetch("/api/profile");
-      const data = await res.json();
-      if (data) {
-        setProfile(data);
-        setInstitutionId(data.institutionId);
-      }
-    } catch (err) {
-      console.error("Profile load error:", err);
-    }
-  }
-
-  /* ------------------------------
-      LOAD INSTITUTIONS
+      LOAD INSTITUTIONS ONLY
   ------------------------------- */
   async function loadInstitutions() {
     try {
       const res = await fetch("/api/institutions");
       const data = await res.json();
-      // ✅ Correctly targets the "institutions" key from your API object
+      // Ensure we target the 'institutions' key from your specific API format
       setInstitutions(data.institutions || []);
     } catch (err) {
       console.error("Institutions fetch error:", err);
@@ -58,45 +29,105 @@ export default function AccessRequestor() {
   }
 
   useEffect(() => {
-    // Only run fetches if Kinde has finished checking auth
     if (!authLoading) {
-      Promise.all([loadProfile(), loadInstitutions()]).then(() =>
-        setLoading(false),
-      );
+      loadInstitutions().then(() => setLoading(false));
     }
   }, [authLoading]);
 
   /* ------------------------------
-      SAVE CHANGES
+      SAVE CHANGES (Directly to Access API)
+  ------------------------------- */
+  async function saveAll(newInstitutionId) {
+    if (!user) return;
+"use client";
+
+import { useState, useEffect } from "react";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Globe } from "lucide-react";
+
+export default function AccessRequestor() {
+  const { isAuthenticated, user, isLoading: authLoading } = useKindeBrowserClient();
+  
+  const [institutions, setInstitutions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [institutionId, setInstitutionId] = useState("");
+
+  /* ------------------------------
+      LOAD INSTITUTIONS ONLY
+  ------------------------------- */
+  async function loadInstitutions() {
+    try {
+      const res = await fetch("/api/institutions");
+      const data = await res.json();
+      // Ensure we target the 'institutions' key from your specific API format
+      setInstitutions(data.institutions || []);
+    } catch (err) {
+      console.error("Institutions fetch error:", err);
+      setInstitutions([]);
+    }
+  }
+
+  useEffect(() => {
+    if (!authLoading) {
+      loadInstitutions().then(() => setLoading(false));
+    }
+  }, [authLoading]);
+
+  /* ------------------------------
+      SAVE CHANGES (Directly to Access API)
   ------------------------------- */
   async function saveAll(newInstitutionId) {
     if (!user) return;
 
     try {
+      // ✅ We only hit the request-access API, no internal profile API needed here
       await fetch("/api/institution/request-access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // ✅ Using Kinde details for the new profile entry
           name: user.given_name,
           surname: user.family_name,
           email: user.email,
           kindeId: user.id,
-          institution_id: Number(newInstitutionId ?? institutionId),
+          institution_id: Number(newInstitutionId),
           role: "staff",
           approved: false,
         }),
       });
-      loadProfile();
+      // You can add a toast notification here to confirm the request was sent
     } catch (error) {
-      console.error("Profile update error:", error);
+      console.error("Request access error:", error);
     }
   }
 
-  // Handle Auth Guard
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated || authLoading) return null;
 
-  return (
+    try {
+      // ✅ We only hit the request-access API, no internal profile API needed here
+      await fetch("/api/institution/request-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: user.given_name,
+          surname: user.family_name,
+          email: user.email,
+          kindeId: user.id,
+          institution_id: Number(newInstitutionId),
+          role: "staff",
+          approved: false,
+        }),
+      });
+      // You can add a toast notification here to confirm the request was sent
+    } catch (error) {
+      console.error("Request access error:", error);
+    }
+  }
+
+  if (!isAuthenticated || authLoading) return null;
+
+return (
     // ✅ Responsive padding: p-4 for mobile, mt-10 for desktop
 
     <div>
