@@ -1,5 +1,5 @@
 "use client";
-import React from "react"
+import React from "react";
 import { useState, useEffect } from "react";
 
 export function useProfile() {
@@ -34,9 +34,12 @@ export function useProfile() {
     loading,
     error,
     profile,
-    isAuthenticated: !error,
-    isStaff: profile?.approved === true,
+    isAuthenticated: !!profile && !error,
+
+    isStaff: profile?.role === "staff",
     isSubadmin: profile?.role === "subadmin",
+
+    isApproved: profile?.approved === true,
     institutionName: profile?.institutionName ?? null,
   };
 }

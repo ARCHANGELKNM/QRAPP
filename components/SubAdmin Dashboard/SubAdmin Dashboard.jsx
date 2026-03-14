@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { useAccessControl } from "@/hooks/useAccessControl";
 import ErrorAdminApproval from "@components/Error handling/Admin Approval/Error";
 import { ErrorCreateAccount } from "@components/Error handling/Create Account/Error";
 import LoadingAnimation from "@components/Loading Animation/Loading";
@@ -22,72 +23,31 @@ export default function Dashboard() {
   /* -----------------------------
      HOOKS — ALWAYS TOP LEVEL
   ------------------------------*/
-  const [accessState, setAccessState] = useState("loading");
-  const [profile, setProfile] = useState(null);
+  const access = useAccessControl();
   const [users, setUsers] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
 
-  /* -----------------------------
-     CHECK ACCESS
-  ------------------------------*/
-useEffect(() => {
-  async function check() {
-    try {
-      const res = await fetch("/api/profile");
-      if (!res.ok) {
-        setAccessState("unauthenticated");
-        return;
-      }
-
-      const data = await res.json();
-      setProfile(data);
-
-      // ✅ THE GATEKEEPER: Must be BOTH subadmin AND approved
-      if (data.role === 'subadmin' && data.approved === true) {
-        setAccessState(true);
-        setLoadingData(false);
-        return; // Exit early since they are good to go
-      }
-
-      // ❌ If they are a subadmin but waiting for approval
-      if (data.role === 'subadmin' && data.approved === false) {
-        setAccessState("pending");
-        return;
-      }
-
-      // ❌ If they are logged in but not a subadmin at all
-      setAccessState("unauthorized");
-
-    } catch (err) {
-      setAccessState("unauthenticated");
-    }
-  }
-  check();
-}, []);
-
-  /* -----------------------------
-     LOAD USERS ONCE APPROVED
-  ------------------------------*/
   useEffect(() => {
-    if (accessState !== true) return;
+    // Only fetch if the hook says access is 'true' AND user is subadmin
+    if (access.state !== true || !access.isSubadmin) return;
 
     async function fetchData() {
       try {
         const res = await fetch("/api/subadmin/dashboard");
         const data = await res.json();
-
         if (data.users) {
           setUsers(data.users);
         }
       } catch (err) {
         console.error("Dashboard fetch error:", err);
+      } finally {
+        setLoadingData(false);
       }
-
-      setLoadingData(false);
     }
 
     fetchData();
-  }, [accessState]);
+  }, [access.state, access.isSubadmin]);
+
 
   /* -----------------------------
      ACTION HANDLER
@@ -107,25 +67,13 @@ useEffect(() => {
     setUsers(data.users || []);
   }
 
-  /* -----------------------------
-     ACCESS STATE HANDLING
-  ------------------------------*/
-  if (accessState === "loading") {
-    return <LoadingAnimation />;
+  if (access.state === "loading") return <LoadingAnimation />;
+  if (access.state === "unauthenticated") return <ErrorCreateAccount />;
+  if (access.state === "no-profile" || access.state === "pending") return <ErrorAdminApproval />;
+  if (access.state === true && !access.isSubadmin) {
+    return <ErrorAdminsOnly />;
   }
-
-  if (accessState === "unauthenticated") {
-    return <ErrorCreateAccount />;
-  }
-
-  if (accessState === "pending") {
-    return <ErrorAdminApproval />;
-  }
-
-  if (accessState === 'unauthorized') {
-    return <ErrorAdminsOnly/>;
-  }
-
+  
   /* -----------------------------
      UI (RESPONSIVE & CENTERED)
   ------------------------------*/

@@ -1,10 +1,12 @@
 "use client";
 
+import LoadingAnimation from "@components/Loading Animation/Loading";
 import { useRouter } from "next/navigation"; // Cleaned up import path
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { LogOut, UserCog, ShieldCheck, Key } from "lucide-react";
+import { useAccessControl } from "@/hooks/useAccessControl";
 import AccessRequestor from "@/components/Settings Page Components/RequestAccess/RequestAccess";
 import { RegisterLink, LoginLink , LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
 import { ErrorCreateAccount } from "@/components/Error handling/Create Account/Error";
@@ -13,14 +15,9 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 export default function SettingsPage() {
   const route = useRouter();
   const { isAuthenticated, isLoading, user } = useKindeBrowserClient();
-
-  if (isLoading) {
-    return <div className="flex justify-center mt-20">Loading...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return <ErrorCreateAccount />;
-  }
+  const access = useAccessControl();
+  if (access.state === "loading") return <LoadingAnimation/>;
+  if (access.state === "unauthenticated") return <ErrorCreateAccount />;
 
   return (
     // Added horizontal padding for mobile (px-4) and vertical spacing

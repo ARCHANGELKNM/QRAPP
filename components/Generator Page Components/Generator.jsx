@@ -117,15 +117,11 @@ export default function Generator() {
      ACCESS CONTROL (NO EARLY RETURN)
   ------------------------------*/
 
-  if (access.state === "loading") {
-    return <LoadingAnimation />;
-  }
-  if (access.state === "unauthenticated" ) {
-    return <ErrorCreateAccount />;
-  }
-  if (access.state === "pending" || access.state === false) {
-    return <ErrorAdminApproval />;
-  }
+
+if (access.state === "loading") return <LoadingAnimation />;
+if (access.state === "unauthenticated") return <ErrorCreateAccount />;
+if (access.state === "no-profile" || access.state === "pending")
+  return <ErrorAdminApproval />;
 
   // Only authenticated and approved users reach here
   return (

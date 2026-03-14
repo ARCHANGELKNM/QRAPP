@@ -3,11 +3,23 @@
 import { useState, useEffect } from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs"; // Added Import
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+
+
 
 export default function AccessRequestor() {
-  const { isAuthenticated, user, isLoading: authLoading } = useKindeBrowserClient();
-  
+  const {
+    isAuthenticated,
+    user,
+    isLoading: authLoading,
+  } = useKindeBrowserClient();
+
   const [profile, setProfile] = useState(null);
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +61,7 @@ export default function AccessRequestor() {
     // Only run fetches if Kinde has finished checking auth
     if (!authLoading) {
       Promise.all([loadProfile(), loadInstitutions()]).then(() =>
-        setLoading(false)
+        setLoading(false),
       );
     }
   }, [authLoading]);
@@ -86,8 +98,8 @@ export default function AccessRequestor() {
 
   return (
     // ✅ Responsive padding: p-4 for mobile, mt-10 for desktop
-    <div className="max-w-3xl mx-auto mt-6 md:mt-10 px-4 md:px-0">
-      {/* INSTITUTION SELECTOR */}
+
+    <div>
       <Card className="shadow-md">
         <CardHeader>
           <CardTitle className="text-lg">Institution</CardTitle>
