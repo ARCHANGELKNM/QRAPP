@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from "@/components/Navigation Bar/NavBar"; // Import your NavigationBar component
+import NavBar from "@components/NavigationBar/NavBar"; // Import your NavigationBar component
 import "../globals.css";
 
 

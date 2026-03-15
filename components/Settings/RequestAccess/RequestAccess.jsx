@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { Globe } from "lucide-react";
+
 
 export default function AccessRequestor() {
   const { isAuthenticated, user, isLoading: authLoading } = useKindeBrowserClient();

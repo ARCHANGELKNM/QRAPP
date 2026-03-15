@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import Scanner from "@components/Scanner Component/Scanner";
+import Scanner from "@components/Scanner/Scanner";
 
 export default function Page () {
   return (

@@ -3,12 +3,11 @@
 import { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import HowToUse from "@components/HomePage Componets/How To Use/How to Use";
-import Features from "@components/HomePage Componets/Feature List/Feature List";
-import CallToAction from "@components/HomePage Componets/Call To Action/CallToAction";
-import WQR from "@components/HomePage Componets/Why Qrcodes/WQR";
-import InfoSection from "@components/HomePage Componets/informationSection/InformationSection";
-import Hero from "@components/HomePage Componets/Hero's Section/Hero's Section";
+import HowToUse from "@components/HomePage/How To Use/How to Use";
+import Features from "@components/HomePage/Feature List/Feature List";
+import CallToAction from "@components/HomePage/Call To Action/CallToAction";
+import WQR from "@components/HomePage/Why Qrcodes/WQR";
+import Hero from "@components/HomePage/Hero's Section/Hero's Section";
 
 export default function Home() {
   useEffect(() => {
@@ -24,14 +23,12 @@ export default function Home() {
 
       <Hero />
 
-      {/* <InfoSection /> */}
-
       <HowToUse />
 
       <Features />
 
       <WQR />
-
+      
       <CallToAction />
     </section>
   );

@@ -77,7 +77,7 @@ export default function Scanner ()  {
   }
 
   return (
-    <div className="relative w-full min-h-screen bg-black flex items-center justify-center">
+    <div className="relative w-screen min-h-screen bg-black flex items-center justify-center">
       <motion.div className="relative w-11/12 aspect-square border-4 border-white rounded-2xl overflow-hidden">
         <video
           ref={videoRef}

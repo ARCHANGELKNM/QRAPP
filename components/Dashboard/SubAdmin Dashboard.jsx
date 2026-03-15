@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/table";
 
 import { useAccessControl } from "@/hooks/useAccessControl";
-import ErrorAdminApproval from "@components/Error handling/Admin Approval/Error";
-import { ErrorCreateAccount } from "@components/Error handling/Create Account/Error";
-import LoadingAnimation from "@components/Loading Animation/Loading";
-import ErrorAdminsOnly from "@components/Error handling/Admin Access/Error1";
+import ErrorAdminApproval from "@components/Errors/Admin Approval/Error";
+import { ErrorCreateAccount } from "@components/Errors/Create Account/Error";
+import LoadingAnimation from "@components/LoadingAnimation/Loading";
+import ErrorAdminsOnly from "@components/Errors/Admin Access/Error1";
 
 export default function Dashboard() {
   /* -----------------------------

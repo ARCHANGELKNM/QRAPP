@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { AppSidebar } from "@/components/Navigation Bar/app-sidebar";
+import { AppSidebar } from "@components/NavigationBar/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,

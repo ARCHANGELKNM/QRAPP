@@ -1,53 +1,24 @@
-"use client";
-import React from "react";
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import QRCodeStyling from "qr-code-styling";
-import { X } from "lucide-react";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@components/ui/card";
+'use client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui/card";
 import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 
-import ErrorAdminApproval from "@components/Error handling/Admin Approval/Error";
-import { ErrorCreateAccount } from "@components/Error handling/Create Account/Error";
-import LoadingAnimation from "@components/Loading Animation/Loading";
+// Guards & Feedback
+import ErrorAdminApproval from "@components/Errors/Admin Approval/Error";
+import { ErrorCreateAccount } from "@components/Errors/Create Account/Error";
+import LoadingAnimation from "@components/LoadingAnimation/Loading";
 
+//  Hooks
+
+import { useState, useRef, useEffect } from "react";
 import { useProfile } from "@/hooks/useProfile";
 import { useAccessControl } from "@/hooks/useAccessControl";
 
 export default function Generator() {
-  // Onboard profile for authenticated users
-  /* -----------------------------
-   ONBOARDING SYNC (Inside Generator)
-------------------------------*/
-  useEffect(() => {
-    if (access.state !== true) return;
-    const syncProfile = async () => {
-      try {
-        await fetch("/api/onboard", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        });
-        console.log("Profile synced successfully");
-      } catch (err) {
-        console.log("Onboarding sync failed:", err);
-      }
-    };
-
-    syncProfile();
-  }, [access.state]); // Only runs when the access state switches to 'true'
-  /* -----------------------------
-     STATE + REFS (HOOKS FIRST!)
-  ------------------------------*/
+const access = useAccessControl(); // Define this FIRST
+  const { profile, institutionName } = useProfile();
+  
   const [showQR, setShowQR] = useState(false);
-
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [grade, setGrade] = useState("");
@@ -55,31 +26,51 @@ export default function Generator() {
 
   const qrRef = useRef(null);
   const qrCodeRef = useRef(null);
-  const access = useAccessControl();
 
   /* -----------------------------
-     HOOKS FOR ACCESS + PROFILE
-  ------------------------------*/
-  const { profile, institutionName } = useProfile();
-
-  /* -----------------------------
-     INIT QR INSTANCE
+     2. ONBOARDING SYNC
   ------------------------------*/
   useEffect(() => {
-    if (!qrCodeRef.current) {
-      qrCodeRef.current = new QRCodeStyling({
-        width: 250,
-        height: 250,
-        type: "svg",
-        data: "",
-        dotsOptions: { color: "#000", type: "rounded" },
-        backgroundOptions: { color: "#fff" },
-      });
-    }
+    // Now 'access' is initialized before this runs
+    if (access.state !== true) return;
+    
+    const syncProfile = async () => {
+      try {
+        await fetch("/api/onboard", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+      } catch (err) {
+        console.log("Onboarding sync failed:", err);
+      }
+    };
+
+    syncProfile();
+  }, [access.state]);
+
+  /* -----------------------------
+     3. INIT QR INSTANCE (SSR SAFE)
+  ------------------------------*/
+  useEffect(() => {
+    // Dynamically import to prevent "C before initialization" errors
+    const initQR = async () => {
+      const QRCodeStyling = (await import("qr-code-styling")).default;
+      if (!qrCodeRef.current) {
+        qrCodeRef.current = new QRCodeStyling({
+          width: 250,
+          height: 250,
+          type: "svg",
+          data: "",
+          dotsOptions: { color: "#000", type: "rounded" },
+          backgroundOptions: { color: "#fff" },
+        });
+      }
+    };
+    initQR();
   }, []);
 
   /* -----------------------------
-     SHOW QR WHEN OPENED
+     4. HANDLERS
   ------------------------------*/
   useEffect(() => {
     if (showQR && qrRef.current && qrCodeRef.current) {
@@ -88,42 +79,24 @@ export default function Generator() {
     }
   }, [showQR]);
 
-  /* -----------------------------
-     GENERATE QR
-  ------------------------------*/
   function handleGenerateClick() {
+    if (!qrCodeRef.current) return;
     const finalInstitution = institutionName || manualInstitution || "N/A";
-
-    const combined = `${name || "N/A"} ${surname || "N/A"} | Grade ${
-      grade || "N/A"
-    } | ${finalInstitution}`;
+    const combined = `${name || "N/A"} ${surname || "N/A"} | Grade ${grade || "N/A"} | ${finalInstitution}`;
 
     qrCodeRef.current.update({ data: combined });
-
     setShowQR(true);
 
-    // Log event (non-blocking)
     fetch("/api/qr-code", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        content: combined,
-        institutionName: finalInstitution,
-      }),
+      body: JSON.stringify({ content: combined, institutionName: finalInstitution }),
     }).catch(() => {});
   }
 
-  /* -----------------------------
-     DOWNLOAD QR
-  ------------------------------*/
   function handleDownload() {
-    qrCodeRef.current.download({
-      name: "qrcode",
-      extension: "png",
-    });
-  }
-
-  /* -----------------------------
+    qrCodeRef.current?.download({ name: "qrcode", extension: "png" });
+  }  /* -----------------------------
      ACCESS CONTROL (NO EARLY RETURN)
   ------------------------------*/
 
