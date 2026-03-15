@@ -37,7 +37,7 @@ export default function Generator() {
         });
         console.log("Profile synced successfully");
       } catch (err) {
-        console.error("Onboarding sync failed:", err);
+        console.log("Onboarding sync failed:", err);
       }
     };
 
