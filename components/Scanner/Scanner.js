@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@components/ui/button";
+import LoadingAnimation from "@components/LoadingAnimation/Loading";
 
 export default function Scanner ()  {
   const [qrResult, setQrResult] = useState(null);
@@ -70,15 +71,13 @@ export default function Scanner ()  {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-black">
-        <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin" />
-      </div>
+       <LoadingAnimation/>
     );
   }
 
   return (
-    <div className="relative w-screen min-h-screen bg-black flex items-center justify-center">
-      <motion.div className="relative w-11/12 aspect-square border-4 border-white rounded-2xl overflow-hidden">
+    <div className="relative w-ful min-h-screen  flex items-center justify-center">
+      <motion.div className="relative w-11/12 aspect-square border-4 animated-gradient-text rounded-2xl overflow-hidden">
         <video
           ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover"

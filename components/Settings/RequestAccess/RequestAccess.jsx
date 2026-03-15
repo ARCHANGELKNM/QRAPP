@@ -37,30 +37,31 @@ export default function AccessRequestor() {
   /* ------------------------------
       SAVE CHANGES (Directly to Access API)
   ------------------------------- */
-  async function saveAll(newInstitutionId) {
-    if (!user) return;
-
-    try {
-      // ✅ We only hit the request-access API, no internal profile API needed here
-      await fetch("/api/institution/request-access", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: user.given_name,
-          surname: user.family_name,
-          email: user.email,
-          kindeId: user.id,
-          institution_id: Number(newInstitutionId),
-          role: "staff",
-          approved: false,
-        }),
-      });
-      // You can add a toast notification here to confirm the request was sent
-    } catch (error) {
-      console.error("Request access error:", error);
-    }
+async function saveAll(newInstitutionId) {
+ 
+  if (!user || !user.id || !user.email) {
+    console.error("User data not ready yet");
+    return;
   }
 
+  try {
+    await fetch("/api/institution/request-access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: user.given_name,
+        surname: user.family_name,
+        email: user.email, // ✅ Ensure this isn't null
+        kindeId: user.id,
+        institution_id: Number(newInstitutionId),
+        role: "staff",
+        approved: false,
+      }),
+    });
+  } catch (error) {
+    console.error("Save error:", error);
+  }
+}
   if (!isAuthenticated || authLoading) return null;
 
 return (

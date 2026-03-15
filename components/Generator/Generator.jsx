@@ -1,5 +1,5 @@
 'use client';
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence , motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui/card";
 import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
@@ -103,7 +103,7 @@ const access = useAccessControl(); // Define this FIRST
 
   if (access.state === "loading") return <LoadingAnimation />;
   if (access.state === "unauthenticated") return <ErrorCreateAccount />;
-  if (access.state === "no-profile" || access.state === "pending")
+  if (access.state !== true )
     return <ErrorAdminApproval />;
 
   // Only authenticated and approved users reach here
