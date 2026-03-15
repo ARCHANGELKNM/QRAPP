@@ -9,6 +9,12 @@ export async function POST() {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+   if (!user || !user.email) {
+     return NextResponse.json(
+       { error: "No email found in Kinde session" },
+       { status: 400 },
+     );
+   }
   // Check if profile exists
   const existing = await db
     .select()
