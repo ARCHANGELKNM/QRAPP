@@ -1,7 +1,7 @@
 import React from "react";
 import NavBar from "@components/NavigationBar/NavBar"; // Import your NavigationBar component
 import "../globals.css";
-
+import { Toaster } from "@/components/ui/toaster"
 
 export default function RootLayout({ children }) {
   return (
@@ -11,6 +11,7 @@ export default function RootLayout({ children }) {
         <NavBar>
           {children}
         </NavBar>
+        <Toaster />
       </body>
     </html>
   );

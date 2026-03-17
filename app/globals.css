@@ -92,6 +92,19 @@
   animation: gradientShift 4s ease infinite;
 }
 
+  .border-scanner {
+  border: linear-gradient(
+    270deg,
+    #4f46e5, /* primary */
+    #6366f1, /* indigo */
+    #9333ea  /* purple */
+  );
+  background-size: 600% 600%;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 4s ease infinite;
+}
+
+
 @keyframes gradientShift {
   0% {
     background-position: 0% 50%;

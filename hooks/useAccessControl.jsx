@@ -21,18 +21,20 @@ export function useAccessControl() {
     return { state: "loading" };
   }
 
-if (error === "unauthenticated" || isAuthenticated === false) {
-  return { state: "unauthenticated" };
-}
+  // 🛑 GUARD 1: Not logged in? Boot them.
+  if (error === "unauthenticated" || !isAuthenticated) {
+    return { state: "unauthenticated" };
+  }
 
+  // 🛑 GUARD 2: No profile in your DB? They haven't requested access yet.
   if (!profile) {
-    return { state: "no-profile" }; 
+    return { state: "no-profile" };
   }
 
+  // 🛑 GUARD 3: In the DB but 'approved' is false? Keep them out.
   if (profile.approved === false) {
-    return { state: "pending" }; 
+    return { state: "pending" };
   }
-
   return {
     state: true,
     isStaff,

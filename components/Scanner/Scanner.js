@@ -13,6 +13,22 @@ export default function Scanner ()  {
   const readerRef = useRef(null);
   const controlsRef = useRef(null);
 
+  const text = "QRA";
+  const [displayed, setDisplayed] = useState("");
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (index >= text.length) return;
+
+    const timeout = setTimeout(() => {
+      setDisplayed((prev) => prev + text[index]);
+      setIndex((prev) => prev + 1);
+    }, 180);
+
+    return () => clearTimeout(timeout);
+  }, [index]);
+
+
   /* -----------------------------
      LOADING DELAY
   ------------------------------*/
@@ -54,7 +70,7 @@ export default function Scanner ()  {
       .catch(() => {});
 
     return () => {
-      // ✅ STOP CAMERA ON PAGE LEAVE
+
       if (controlsRef.current) {
         controlsRef.current.stop();
         controlsRef.current = null;
@@ -76,8 +92,8 @@ export default function Scanner ()  {
   }
 
   return (
-    <div className="relative w-ful min-h-screen  flex items-center justify-center">
-      <motion.div className="relative w-11/12 aspect-square border-4 animated-gradient-text rounded-2xl overflow-hidden">
+    <div className="relative w-full min-h-screen flex items-center justify-center">
+      <motion.div className="relative w-11/12 aspect-square border-4  rounded-2xl overflow-hidden">
         <video
           ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover"

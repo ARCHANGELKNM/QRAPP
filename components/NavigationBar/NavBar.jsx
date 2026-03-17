@@ -20,7 +20,7 @@ export default function NavBar({children}) {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset className="flex flex-col min-h-screen">
-        <header className=" sticky top-0 flex h-10 shrink-0 items-center gap-2 border-b m-0 bg-white ">
+        <header className=" sticky top-0 flex h-10 shrink-0 items-center gap-2 border-b m-0 bg-sidebar ">
           <SidebarTrigger className="-ml-1" />
         </header>
 

@@ -10,15 +10,16 @@ import { ErrorCreateAccount } from "@components/Errors/Create Account/Error";
 import LoadingAnimation from "@components/LoadingAnimation/Loading";
 
 //  Hooks
-
+import { useToast } from "@/hooks/use-toast";
 import { useState, useRef, useEffect } from "react";
 import { useProfile } from "@/hooks/useProfile";
 import { useAccessControl } from "@/hooks/useAccessControl";
+import { X } from "lucide-react";
 
 export default function Generator() {
-const access = useAccessControl(); // Define this FIRST
+   const access = useAccessControl(); // Define this FIRST
+  const { toast } = useToast();
   const { profile, institutionName } = useProfile();
-  
   const [showQR, setShowQR] = useState(false);
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
@@ -27,6 +28,9 @@ const access = useAccessControl(); // Define this FIRST
 
   const qrRef = useRef(null);
   const qrCodeRef = useRef(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+
 
   /* -----------------------------
      2. ONBOARDING SYNC
@@ -93,18 +97,32 @@ const access = useAccessControl(); // Define this FIRST
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content: combined, institutionName: finalInstitution }),
     }).catch(() => {});
+
+    toast({
+    title: "QR Code Ready!",
+    description: "Your code has been generated. Click on it to download it.",
+  });
   }
 
   function handleDownload() {
     qrCodeRef.current?.download({ name: "qrcode", extension: "png" });
-  }  /* -----------------------------
+  } 
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  /* -----------------------------
      ACCESS CONTROL (NO EARLY RETURN)
   ------------------------------*/
 
   if (access.state === "loading") return <LoadingAnimation />;
   if (access.state === "unauthenticated") return <ErrorCreateAccount />;
-  if (access.state !== true )
-    return <ErrorAdminApproval />;
+  if (access.state === "no-profile" || access.state === "pending" || access.state!==true) {
+  return <ErrorAdminApproval />; 
+}
+
+// Final safety check
+if (access.state !== true) return <ErrorAdminApproval />;
 
   // Only authenticated and approved users reach here
   return (

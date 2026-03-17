@@ -26,11 +26,11 @@ export default function ErrorAdminApproval() {
         </EmptyMedia>
         <EmptyTitle>Access not authorized </EmptyTitle>
         <EmptyDescription>
-          Try requesting access to an institutional domain
+          Try requesting selecting access to an institution in the settings page
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button className="w-full" onClick={() => router.push("/settings")}>
+        <Button className="w-full animate-pulse" onClick={() => router.push("/settings")}>
           <UserPlus />
           Request Access
         </Button>

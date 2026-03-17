@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-
+import { useToast } from "@/hooks/use-toast";
 
 export default function AccessRequestor() {
   const { isAuthenticated, user, isLoading: authLoading } = useKindeBrowserClient();
-  
+  const { toast } = useToast();
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [institutionId, setInstitutionId] = useState("");
@@ -45,7 +45,7 @@ async function saveAll(newInstitutionId) {
   }
 
   try {
-    await fetch("/api/institution/request-access", {
+    await fetch("/api/institutions/request-access", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -57,10 +57,15 @@ async function saveAll(newInstitutionId) {
         role: "staff",
         approved: false,
       }),
+   
+   
     });
   } catch (error) {
     console.error("Save error:", error);
   }
+
+
+
 }
   if (!isAuthenticated || authLoading) return null;
 
@@ -70,7 +75,7 @@ return (
     <div>
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle className="text-lg">Institution</CardTitle>
+          <CardTitle className="text-lg"> Select an institutional domain </CardTitle>
         </CardHeader>
 
         <CardContent>

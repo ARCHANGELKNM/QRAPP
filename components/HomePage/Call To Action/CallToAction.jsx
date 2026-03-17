@@ -4,8 +4,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CTA() {
+  const {toast} = useToast();
   const [showPolicy, setShowPolicy] = useState(false);
   const [pendingRoute, setPendingRoute] = useState(null);
   const router = useRouter();
@@ -18,6 +20,11 @@ export default function CTA() {
 
   // When user accepts the policy
   const acceptPolicy = () => {
+     toast({
+      title: "Welcome to QRA!",
+      description:
+        "Sit tight you'll be redirected to the generator or scanner page soon",
+    });
     setShowPolicy(false);
     if (pendingRoute) router.push(pendingRoute);
   };
@@ -43,7 +50,7 @@ export default function CTA() {
           </h2>
 
           <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto mb-10">
-            Fast, secure, and institution-ready QR codes — built for QRA.
+            Fast, secure, and institution-ready QR codes.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -75,7 +82,7 @@ export default function CTA() {
 
             <p className="text-sm text-gray-700 mb-4">
               To continue, please acknowledge our data handling policy.  
-              QRA only stores the minimum data required for attendance tracking.
+              QRA only stores the minimum data required for QR-code generation.
               <Link href="/policy" className="text-indigo-600 underline">Learn more</Link>
             </p>
 

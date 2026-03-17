@@ -31,6 +31,7 @@ export async function POST() {
     kindeUserId: user.id,
     name: user.given_name ?? "",
     surname: user.family_name ?? "",
+    email: user.email, // 👈 THIS WAS MISSING
     role: "staff",
     approved: false,
   });
