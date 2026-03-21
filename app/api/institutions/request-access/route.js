@@ -7,8 +7,10 @@ import { RequireAuth } from "@lib/server/auth/requireAuth";
 
 export async function POST(req) {
   try {
-    const { user } = await RequireAuth();
-    const body = await req.json();
+    
+    const body = await req.json();``
+    const { user } = await RequireAuth(req , body);
+    
 
     const institution_id = body.institution_id || body.institutionId;
     // 🛑 STOP: If Kinde didn't return a user, don't try to read user.id
