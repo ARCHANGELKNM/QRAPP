@@ -51,7 +51,7 @@ export default function Account () {
       </div>
 
       {/* 3. ACTIONS */}
-      <div className="flex items-center gap-3" onClick={route.push('/generator')}>
+      <div className="flex items-center gap-3" onClick={router.push('/generator')}>
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 text-zinc-500 transition-all group-hover:bg-[#4f46e5] group-hover:text-white dark:bg-zinc-800">
           <QrCode size={20} />
         </div>
