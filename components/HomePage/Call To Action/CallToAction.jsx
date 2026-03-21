@@ -7,20 +7,20 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
 export default function CTA() {
-  const {toast} = useToast();
+  const { toast } = useToast();
   const [showPolicy, setShowPolicy] = useState(false);
   const [pendingRoute, setPendingRoute] = useState(null);
   const router = useRouter();
 
   // When the user clicks Generator or Scanner
   const handleProtectedNav = (route) => {
-    setPendingRoute(route); 
-    setShowPolicy(true);    
+    setPendingRoute(route);
+    setShowPolicy(true);
   };
 
   // When user accepts the policy
   const acceptPolicy = () => {
-     toast({
+    toast({
       title: "Welcome to QRA!",
       description:
         "Sit tight you'll be redirected to the generator or scanner page soon",
@@ -54,7 +54,6 @@ export default function CTA() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-
             {/* GENERATOR button (protected) */}
             <button
               onClick={() => handleProtectedNav("/generator")}
@@ -76,27 +75,42 @@ export default function CTA() {
 
       {/* POLICY POPUP */}
       {showPolicy && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-          <div className="bg-white text-black rounded-2xl p-6 max-w-md w-full shadow-xl">
-            <h2 className="text-xl font-bold mb-3">Privacy Policy & Permissions</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[100] px-4 pb-6 sm:pb-0">
+          <div className="bg-white dark:bg-zinc-950 rounded-[2rem] sm:rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl border border-zinc-200 dark:border-zinc-800 animate-in fade-in zoom-in-95 slide-in-from-bottom-10 duration-300">
+            {/* Header */}
+            <h2 className="text-xl md:text-2xl font-black tracking-tighter text-zinc-900 dark:text-zinc-100 mb-3">
+              Privacy & Permissions
+            </h2>
 
-            <p className="text-sm text-gray-700 mb-4">
-              To continue, please acknowledge our data handling policy.  
-              QRA only stores the minimum data required for QR-code generation.
-              <Link href="/policy" className="text-indigo-600 underline">Learn more</Link>
-            </p>
+            {/* Body - Added max-height and scroll for small screens */}
+            <div className="max-h-[40vh] overflow-y-auto mb-6 pr-2 custom-scrollbar">
+              <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                To continue, please acknowledge our data handling policy. QRA
+                only stores the minimum data required for secure QR-code
+                generation and verification.
+                <br />
+                <br />
+                <Link
+                  href="/policy"
+                  className="text-[#4f46e5] font-bold underline underline-offset-4 hover:text-[#9333ea] transition-colors"
+                >
+                  Read the full policy
+                </Link>
+              </p>
+            </div>
 
-            <div className="flex justify-end gap-3">
+            {/* Actions - Stacks on mobile, Side-by-side on desktop */}
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
               <button
                 onClick={() => setShowPolicy(false)}
-                className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-bold text-sm hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
               >
                 Cancel
               </button>
 
               <button
                 onClick={acceptPolicy}
-                className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#4f46e5] to-[#9333ea] text-white font-bold text-sm shadow-lg shadow-indigo-500/20 hover:opacity-90 active:scale-95 transition-all"
               >
                 Accept & Continue
               </button>

@@ -1,53 +1,41 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { staffProfiles } from "@/lib/schema";
-
 import { eq } from "drizzle-orm";
-import { RequireAuth } from "@lib/server/auth/requireAuth";
+import { RequireAuth } from "@/lib/server/auth/requireAuth";
 
 export async function POST(req) {
   try {
-    
-    const body = await req.json();``
-    const { user } = await RequireAuth(req , body);
-    
+    const body = await req.json();
+    const auth = await RequireAuth(req, body);
 
-    const institution_id = body.institution_id || body.institutionId;
-    // 🛑 STOP: If Kinde didn't return a user, don't try to read user.id
-    if (!user || !user.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (auth.error) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    if (!institution_id) {
-      return NextResponse.json(
-        { error: "Institution ID required" },
-        { status: 400 },
-      );
-    }
+    const { user, existing, institution_id } = auth;
 
-    const existing = await db
-      .select()
-      .from(staffProfiles)
-      .where(eq(staffProfiles.kindeUserId, user.id))
-      .limit(1);
+    if (existing) {
+      await db.update(staffProfiles)
+        .set({ institutionId: institution_id, approved: false }) // ✅ Match schema key: 'institutionId'
+        .where(eq(staffProfiles.kindeUserId, user.id)); // ✅ Match schema key: 'kindeUserId'
 
-    if (existing.length) {
-      return NextResponse.json({ message: "Request already exists" });
+      return NextResponse.json({ message: "Institution updated. Pending approval." });
     }
 
     await db.insert(staffProfiles).values({
-      kinde_user_id: user.id,
+      kindeUserId: user.id, // ✅ Matches schema
       name: user.given_name || "N/A",
       surname: user.family_name || "N/A",
+      email: user.email,
       role: "staff",
-      institution_id,
+      institutionId: institution_id, // ✅ Matches schema
       approved: false,
     });
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Request access API error:", err);
-
-    return NextResponse.json({ error: "Request failed" }, { status: 500 });
+    console.error("API Error:", err);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

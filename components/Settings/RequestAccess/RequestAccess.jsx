@@ -44,53 +44,58 @@ export default function AccessRequestor() {
       SAVE CHANGES (Directly to Access API)
   ------------------------------- */
 async function saveAll(newInstitutionId) {
-   setIsSaving(true);
-  if (!user || !user.id || !user.email) {
-    console.error("User data not ready yet");
+  // 1. Guard check
+  if (!user?.id) {
+    toast({
+      variant: "destructive",
+      title: "Authentication Error",
+      description: "Please log in to submit a request.",
+    });
     return;
   }
 
+  setIsSaving(true); // 🔄 Start Loading
+
   try {
-    await fetch("/api/institutions/request-access", {
+    // ✅ Use the parsed 'res' properly
+    const res = await fetch("/api/institutions/request-access", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      // ✅ We only send the institution_id; the server gets the rest from Kinde
       body: JSON.stringify({
-        name: user.given_name,
-        surname: user.family_name,
-        email: user.email, // ✅ Ensure this isn't null
-        kindeId: user.id,
         institution_id: Number(newInstitutionId),
-        role: "staff",
-        approved: false,
-      }),  });
-   
-   const data = await res.json();
+      }),
+    });
 
-      if (res.ok) {
-        // ✅ SUCCESS / UPDATE TOAST
-        toast({
-          title: data.message || "Request Sent Successfully",
-          description: "Your request is now in our database. Please wait for an admin to approve your access.",
-        });
-      } else {
-        // ❌ API ERROR (401, 400, etc.)
-        toast({
-          variant: "destructive",
-          title: "Request Failed",
-          description: data.error || "We couldn't save your request. Please try again.",
-        });
-      }
-    } catch (error) {
-      // ❌ NETWORK ERROR
+    const data = await res.json();
+
+    if (res.ok) {
+      // ✅ SUCCESS / UPDATE TOAST
+      toast({
+        title: data.message || "Request Sent Successfully",
+        description: "Your request is now in our database. Please wait for an admin to approve your access.",
+      });
+    } else {
+      // ❌ API ERROR (401, 400, etc.)
       toast({
         variant: "destructive",
-        title: "Connection Error",
-        description: "Check your internet and try again.",
+        title: "Request Failed",
+        description: data.error || "We couldn't save your request. Please try again.",
       });
-       } finally {
-      setIsSaving(false); // ⏹️ Stop Loading
     }
+  } catch (error) {
+    // ❌ NETWORK ERROR
+    console.error("Save error:", error);
+    toast({
+      variant: "destructive",
+      title: "Connection Error",
+      description: "Check your internet and try again.",
+    });
+  } finally {
+    setIsSaving(false); // ⏹️ Stop Loading
+  }
 }
+
   if (!isAuthenticated || authLoading) return null;
 
 return (

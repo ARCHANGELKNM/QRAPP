@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import HowToUse from "@components/HomePage/How To Use/How to Use";
-import Features from "@components/HomePage/Feature List/Feature List";
+import Features from "@components/HomePage/Call To Action/Feature List/Feature List";
 import CallToAction from "@components/HomePage/Call To Action/CallToAction";
 import WQR from "@components/HomePage/Why Qrcodes/WQR";
 import Hero from "@components/HomePage/Hero's Section/Hero's Section";

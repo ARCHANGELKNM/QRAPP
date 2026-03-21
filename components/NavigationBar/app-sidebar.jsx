@@ -3,9 +3,9 @@
 import * as React from "react";
 
 import { useRouter } from "next/navigation";
-import { Command, Bolt, ScanLine, QrCode, Gauge , Menu } from "lucide-react";
+import { Command, Bolt, ScanLine, QrCode, Gauge, Menu } from "lucide-react";
 
-import  NavUser from "./NavUser";
+import NavUser from "./NavUser";
 
 import {
   Sidebar,
@@ -23,9 +23,6 @@ import {
 
 
 
-// ... inside AppSidebar component
-
-// This is sample data
 const data = {
   navMain: [
     {
@@ -66,10 +63,7 @@ export function AppSidebar() {
       collapsible="icon"
       className="overflow-hidden flex flex-col h-full *:data-[sidebar=sidebar]:flex-row"
     >
-      {/* This is the first sidebar */}
-      {/* We disable collapsible and adjust width to icon. */}
-      {/* This will make the sidebar appear as icons. */}
-      <Sidebar
+     <Sidebar
         collapsible="none"
         className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r flex flex-col h-full justify-between"
       >
