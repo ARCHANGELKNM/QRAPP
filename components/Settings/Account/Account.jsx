@@ -8,7 +8,7 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useRouter } from "next/navigation";
 
 export default function Account () {
-  const router = useRouter();
+  // const router = useRouter();
   const { user } = useKindeBrowserClient();
   const initials = `${user?.given_name?.[0] || ""}${user?.family_name?.[0] || ""}`.toUpperCase();
  
@@ -50,13 +50,13 @@ export default function Account () {
         </div>
       </div>
 
-      {/* 3. ACTIONS */}
+      {/* 3. ACTIONS
       <div className="flex items-center gap-3" onClick={router.push('/generator')}>
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 text-zinc-500 transition-all group-hover:bg-[#4f46e5] group-hover:text-white dark:bg-zinc-800">
           <QrCode size={20} />
         </div>
         <ChevronRight className="h-5 w-5 text-zinc-300 transition-colors group-hover:text-zinc-900 dark:group-hover:text-white" />
-      </div>
+      </div> */}
     </Card>
   );
 }
