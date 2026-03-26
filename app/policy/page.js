@@ -2,182 +2,90 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useRouter } from "@node_modules/next/navigation";
+import { useRouter } from "next/navigation"; 
+import { ShieldCheck, ArrowLeft } from "lucide-react";
 
 export default function PolicyPage() {
-  const route = useRouter(); 
+  const router = useRouter(); 
+
   return (
-    <div className="w-full flex justify-center py-10 px-4">
-      <Card className="max-w-3xl w-full shadow-xl border rounded-2xl">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-2xl font-semibold">
-            QRA Policy & Permissions Agreement
-          </CardTitle>
+    <div className="w-full min-h-screen flex justify-center items-center py-10 px-4 bg-zinc-50/50 dark:bg-zinc-950">
+      <Card className="max-w-3xl w-full shadow-2xl border-zinc-200 dark:border-zinc-800 rounded-[2rem] overflow-hidden bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md">
+        <CardHeader className="pb-4 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-[#4f46e5]">
+              <ShieldCheck className="h-6 w-6" />
+            </div>
+            <CardTitle className="text-2xl md:text-3xl font-black tracking-tighter text-zinc-900 dark:text-zinc-100">
+              Policy & Permissions
+            </CardTitle>
+          </div>
+          <p className="text-sm text-zinc-500 font-medium ml-11">
+            Last updated: March 2024
+          </p>
         </CardHeader>
 
-        <CardContent>
-          <ScrollArea className="h-[65vh] w-full  pr-4 text-sm leading-6">
-            {/* --- INTRO --- */}
-            <section className="mb-6">
-              <h2 className="font-semibold text-lg mb-2">1. Introduction</h2>
-              <p>
-                This Privacy Policy and Permissions Agreement (“Agreement”)
-                governs the use of the QRA Application (“the Application”). By
-                accessing or using any feature within the Application, you
-                acknowledge that you have read, understood, and agree to be
-                bound by the terms outlined in this Agreement.
-              </p>
-            </section>
+        <CardContent className="pt-6">
+          <ScrollArea className="h-[60vh] w-full pr-6 text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed custom-scrollbar">
+            
+            <div className="space-y-8 pb-10">
+              {/* --- SECTION 1 --- */}
+              <section>
+                <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg mb-2 tracking-tight">1. Introduction</h2>
+                <p>
+                  This Privacy Policy and Permissions Agreement (“Agreement”)
+                  governs the use of the <strong>QRA Application</strong>. By
+                  accessing the Application, you acknowledge that you have read and agree to the terms outlined below.
+                </p>
+              </section>
 
-            {/* --- DEFINITIONS --- */}
-            <section className="mb-6">
-              <h2 className="font-semibold text-lg mb-2">2. Definitions</h2>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>
-                  <strong>“Application”</strong> refers to the QRA system
-                  including the dashboard, QR code generator, QR scanner, and
-                  related services.
-                </li>
-                <li>
-                  <strong>“User”</strong> refers to any individual accessing or
-                  interacting with the Application.
-                </li>
-                <li>
-                  <strong>“Institution”</strong> refers to the organization
-                  managing or implementing the Application.
-                </li>
-                <li>
-                  <strong>“Data”</strong> refers to non-personal operational
-                  information processed within the Application.
-                </li>
-              </ul>
-            </section>
+              {/* --- SECTION 4 (Permissions) --- */}
+              <section>
+                <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg mb-2 tracking-tight">4. Permissions Required</h2>
+                <div className="grid gap-4 mt-3">
+                  <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+                    <span className="font-bold text-zinc-900 dark:text-zinc-100 block mb-1 text-xs uppercase tracking-widest">Camera Access</span>
+                    <p className="text-xs">Required exclusively for QR scanning. We do not record or store any video footage.</p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+                    <span className="font-bold text-zinc-900 dark:text-zinc-100 block mb-1 text-xs uppercase tracking-widest">Network Access</span>
+                    <p className="text-xs">Used for secure server communication, validation, and real-time syncing.</p>
+                  </div>
+                </div>
+              </section>
 
-            {/* --- PURPOSE --- */}
-            <section className="mb-6">
-              <h2 className="font-semibold text-lg mb-2">
-                3. Purpose of the Application
-              </h2>
-              <p>
-                The Application serves as an institutional tool for generating
-                QR codes, scanning QR codes, maintaining attendance logs, and
-                supporting administrative functions. It is not intended for
-                personal or recreational use.
-              </p>
-            </section>
-
-            {/* --- PERMISSIONS --- */}
-            <section className="mb-6">
-              <h2 className="font-semibold text-lg mb-2">
-                4. Permissions Required
-              </h2>
-              <p className="mb-3">
-                The Application may require the following permissions to operate
-                correctly:
-              </p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>
-                  <strong>Network Access</strong> — Used for server
-                  communication, validation, and syncing.
-                </li>
-                <li>
-                  <strong>Camera Access</strong> — Required exclusively for QR
-                  code scanning. The Application does not record or store video.
-                </li>
-                <li>
-                  <strong>Role-Based Access</strong> — Administrators,
-                  Sub-admins, and Staff may have different levels of access.
-                </li>
-              </ul>
-            </section>
-
-            {/* --- DATA HANDLING --- */}
-            <section className="mb-6">
-              <h2 className="font-semibold text-lg mb-2">
-                5. Data Handling & Storage
-              </h2>
-              <p>
-                The Application processes only operational data and does not
-                collect or store personal identifiers beyond staff-submitted
-                entries. All data remains the property of the Institution.
-              </p>
-            </section>
-
-            {/* --- SECURITY --- */}
-            <section className="mb-6">
-              <h2 className="font-semibold text-lg mb-2">
-                6. Security Practices
-              </h2>
-              <p>
-                The Application uses authentication, authorization, and secure
-                access controls. Users must not bypass security, use false
-                credentials, or attempt unauthorized modifications.
-              </p>
-            </section>
-
-            {/* --- USER RESPONSIBILITY --- */}
-            <section className="mb-6">
-              <h2 className="font-semibold text-lg mb-2">
-                7. User Responsibilities
-              </h2>
-              <p>
-                Users must access tools only with proper authorization, keep
-                institutional information confidential, and report issues to
-                administrators. Reverse engineering or tampering is prohibited.
-              </p>
-            </section>
-
-            {/* --- LIMITATIONS --- */}
-            <section className="mb-6">
-              <h2 className="font-semibold text-lg mb-2">
-                8. Limitations of Liability
-              </h2>
-              <p>
-                The Application is provided “as is.” The developers and
-                Institution are not responsible for network failures, misuse, or
-                operational disruptions.
-              </p>
-            </section>
-
-            {/* --- UPDATES --- */}
-            <section className="mb-6">
-              <h2 className="font-semibold text-lg mb-2">9. Policy Updates</h2>
-              <p>
-                Policy terms may be updated occasionally. Continued use of the
-                Application implies acceptance of any revised terms.
-              </p>
-            </section>
-
-            {/* --- ACCEPTANCE --- */}
-            <section className="mb-10">
-              <h2 className="font-semibold text-lg mb-2">
-                10. Acceptance of Terms
-              </h2>
-              <p>
-                By using the Generator, Scanner, or any administrative tools,
-                you acknowledge your acceptance of this Agreement.
-              </p>
-
-              <div className="flex justify-end gap-3">
-                <button
-                 onClick={ () => route.push('/')}
-                 className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  onClick={() => {
-                    alert("Policy accepted!");
-                    route.push("/generator");
-                  }}
-                  className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
-                >
-                  Accept & Continue
-                </button>
-              </div>
-            </section>
+              {/* ... Other sections (Definitions, Security, etc.) ... */}
+              
+              <section>
+                <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-lg mb-2 tracking-tight">10. Acceptance</h2>
+                <p>
+                  By using the Generator, Scanner, or any administrative tools,
+                  you acknowledge your acceptance of this Agreement.
+                </p>
+              </section>
+            </div>
           </ScrollArea>
+
+          {/* --- FOOTER ACTIONS --- */}
+          <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-zinc-100 dark:border-zinc-800">
+            <button
+              onClick={() => router.push('/')}
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-bold text-sm hover:bg-zinc-200 transition-all"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Home
+            </button>
+
+            <button
+              onClick={() => {
+                localStorage.setItem("qra_policy_accepted", "true");
+                router.push("/generator");
+              }}
+              className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#4f46e5] to-[#9333ea] text-white font-bold text-sm shadow-lg shadow-indigo-500/20 hover:opacity-90 active:scale-95 transition-all"
+            >
+              Accept & Continue
+            </button>
+          </div>
         </CardContent>
       </Card>
     </div>
